@@ -64,7 +64,11 @@ main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
 .act.sm .nm{font-size:10px}
 .act.sm .tm{display:none}
 .act.g2{background:#E4E4E4}
-.act.picked{color:#fff;text-shadow:none}
+.act.picked{background:#FFFFFF;color:var(--ink);border:1px solid var(--grey3);padding-bottom:11px}
+.act.picked.sm{padding-bottom:8px}
+.act .bar{position:absolute;left:0;right:0;bottom:0;height:7px;display:flex}
+.act .bar span{flex:1}
+.act.sm .bar{height:5px}
 .act.note{background:transparent;border:1px dashed var(--grey3);color:var(--faded);pointer-events:none}
 .act.flash{animation:aflash 1.8s ease-out}
 @keyframes aflash{0%,70%{box-shadow:0 0 0 4px var(--ink)}100%{box-shadow:0 0 0 0 rgba(0,0,0,0)}}
@@ -291,15 +295,6 @@ function renderGrid(){
       const who=S.people.filter(p=>picksOf(p.id).includes(id));
       el.className='act'+(durPx<34?' sm':'')+(ai%2?' g2':'')+(who.length?' picked':'');
       el.dataset.aid=id;
-      if(who.length===1){
-        el.style.background=who[0].color;
-        el.style.color=textOn(who[0].color);
-      }else if(who.length>1){
-        const n=who.length;
-        const scrim=who.some(p=>isLight(p.color))?0.42:0.22;
-        el.style.background=`linear-gradient(rgba(0,0,0,${scrim}),rgba(0,0,0,${scrim})),linear-gradient(90deg,${who.map((p,i)=>`${p.color} ${i*100/n}%,${p.color} ${(i+1)*100/n}%`).join(',')})`;
-        el.style.color='#FFFFFF';
-      }
       el.style.top=(a.start/60*HOUR)+'px';
       el.style.height=Math.max(durPx-2,16)+'px';
       const showTm=durPx>=56;
@@ -307,6 +302,9 @@ function renderGrid(){
       el.style.setProperty('--cl',lines);
       el.title=`${a.artist} — ${fmt(a.start)}–${fmt(a.end)} — ${titleStage(a.stage)}`;
       el.innerHTML=`<div class="nm">${esc(a.artist)}</div>`+(showTm?`<div class="tm">${fmt(a.start)}–${fmt(a.end)}</div>`:'');
+      if(who.length){
+        el.innerHTML+=`<div class="bar">${who.map(p=>`<span style="background:${p.color}"></span>`).join('')}</div>`;
+      }
       el.onclick=()=>openActSheet(id);
       col.appendChild(el);
     });
