@@ -125,6 +125,7 @@ main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
 .snores{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faded);padding:14px 2px}
 .pbig{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--grey3);border-radius:var(--rm);color:var(--pc);padding:14px;margin-bottom:8px;font-size:15px;font-weight:700;text-transform:uppercase;background:var(--paper)}
 .pbig.going{background:var(--pc);border-color:var(--pc);color:var(--pt,#fff)}
+.pbig[disabled]{opacity:.45;pointer-events:none}
 .pbig .pd{width:10px;height:10px}
 .pbig .st2{margin-left:auto;font-size:11px;font-weight:500;letter-spacing:.06em}
 .pvday{font-weight:800;font-size:11px;letter-spacing:.12em;margin:14px 0 6px;text-transform:uppercase;color:var(--txt2)}
@@ -492,8 +493,7 @@ function openCodeSheet(){
     try{
       const snap=await FB.m.get(FB.m.ref(FB.db,'rooms/'+code));
       if(!snap.exists()){ err.textContent='No party found with that code.'; err.style.display='block'; return; }
-      S.room=code; save(true); subscribeRoom(code); closeSheet();
-      setTimeout(()=>{ if(!S.people.some(p=>claimed.has(p.id))) openPersonSheet(null); },600);
+      S.room=code; save(true); pendingWho=true; subscribeRoom(code); closeSheet();
     }catch(e){
       err.textContent='Could not check the code — are you online?'; err.style.display='block';
     }
@@ -618,12 +618,15 @@ function openPersonView(p){
     <h2><span class="pd" style="background:${p.color};width:12px;height:12px;margin-right:6px"></span>${esc(p.name)}</h2>
     ${body}
     <div class="srow" style="margin-top:10px">
+      ${(FIREBASE_CONFIG&&S.room&&!canEdit(p.id))?'<button class="sbtn solid" id="pvClaim">This is me — claim</button>':''}
       <button class="sbtn" id="pvEdit">Edit</button>
       <button class="sbtn" id="pvClose">Close</button>
     </div>
   </div>`;
   sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
   document.getElementById('pvClose').onclick=closeSheet;
+  const pvClaim=document.getElementById('pvClaim');
+  if(pvClaim) pvClaim.onclick=()=>openClaimSheet(p.id);
   document.getElementById('pvEdit').onclick=()=>{
     if(!canEdit(p.id)){ openClaimSheet(p.id,()=>openPersonSheet(p)); return; }
     openPersonSheet(p);
@@ -640,7 +643,7 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "462526934437",
   appId: "1:462526934437:web:79fc053581913c45cf0c4c"
 };
-let FB=null, myUid=null, roomUnsub=null, applyingRemote=false, pushTimer=null;
+let FB=null, myUid=null, roomUnsub=null, applyingRemote=false, pushTimer=null, pendingWho=false;
 const claimed=new Set();
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('htn26:'+s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 function inParty(){ return !!(FIREBASE_CONFIG && S.room && FB); }
@@ -680,6 +683,10 @@ function subscribeRoom(id){
     if(S.active&&!S.people.find(p=>p.id===S.active)) S.active=S.people.length?S.people[0].id:null;
     save(true); renderAll();
     applyingRemote=false;
+    if(pendingWho){
+      pendingWho=false;
+      if(!S.people.some(p=>claimed.has(p.id))) openWhoSheet();
+    }
   });
 }
 function partyQueue(){
@@ -744,6 +751,28 @@ async function sendVia(text,url){
   document.getElementById('svCopy').onclick=ev=>copy(text+'\n'+url,ev.target);
 }
 function inviteText(){ return `Join my ${S.roomName||'festival'} planner party — party code ${S.room}. Open the link, tap Join, claim your name.`; }
+function openWhoSheet(){
+  const sheet=document.getElementById('sheet');
+  sheet.className='open center';
+  const rows=S.people.map(p=>{
+    const mine=claimed.has(p.id);
+    return `<button class="pbig" data-p="${p.id}" style="--pc:${p.color};--pt:${textOn(p.color)}"${mine?' disabled':''}>
+      <span class="pd" style="background:${p.color}"></span>${esc(p.name)}
+      <span class="st2">${mine?'You':(p.pin?'Enter code to claim':'Free to claim')}</span></button>`;
+  }).join('');
+  sheet.innerHTML=`<div class="sheetIn modal">
+    <h2>Who are you?</h2>
+    <div class="shint">Tap your name to claim it — you'll set a 4-digit code so only you can edit your picks.</div>
+    ${rows||''}
+    <div class="srow" style="margin-top:8px"><button class="sbtn solid" id="whoNew">I'm not on the list</button><button class="sbtn" id="whoLater">Later</button></div>
+  </div>`;
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  document.getElementById('whoLater').onclick=closeSheet;
+  document.getElementById('whoNew').onclick=()=>openPersonSheet(null);
+  sheet.querySelectorAll('.pbig[data-p]').forEach(b=>{
+    b.onclick=()=>openClaimSheet(b.dataset.p);
+  });
+}
 function openClaimSheet(pid,onOk){
   const p=S.people.find(x=>x.id===pid);
   if(!p) return;
@@ -766,7 +795,7 @@ function openClaimSheet(pid,onOk){
     const h=await sha(pin);
     if(isNew){ p.pin=h; }
     else if(p.pin!==h){ document.getElementById('pinErr').style.display='block'; inp.value=''; inp.focus(); return; }
-    claimed.add(pid); S.claims=[...claimed];
+    claimed.add(pid); S.claims=[...claimed]; S.active=pid;
     save(); closeSheet(); renderAll();
     if(onOk) onOk();
   };
@@ -957,7 +986,7 @@ function checkImport(){
       <button class="pri" id="prYes">Join</button><button id="prNo">Not now</button></div>`;
     document.getElementById('prYes').onclick=()=>{
       banner.className=''; banner.innerHTML='';
-      S.room=rm[1]; save(true);
+      S.room=rm[1]; save(true); pendingWho=true;
       if(FB) subscribeRoom(S.room);
     };
     document.getElementById('prNo').onclick=()=>{ banner.className=''; banner.innerHTML=''; };
