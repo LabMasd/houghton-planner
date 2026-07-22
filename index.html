@@ -715,14 +715,20 @@ function subscribeRoom(id){
     applyingRemote=true;
     S.room=id; S.roomName=v.name||'Party'; S.roomOrg=v.org; S.roomLib=PALETTES[v.lib]?v.lib:'flat'; S.roomOrgP=v.orgP||null;
     const ppl=v.people||{};
+    const remoteIds=new Set(Object.keys(ppl));
+    const pendingMine=S.people.filter(p=>claimed.has(p.id)&&!remoteIds.has(p.id));
+    const oldPicks=S.picks||{};
     S.people=Object.keys(ppl).sort((a,b)=>(ppl[a].ts||0)-(ppl[b].ts||0))
-      .map(k=>({id:k,name:ppl[k].name,color:ppl[k].color,pin:ppl[k].pin||null}));
+      .map(k=>({id:k,name:ppl[k].name,color:ppl[k].color,pin:ppl[k].pin||null}))
+      .concat(pendingMine);
     S.picks={};
     const pk=v.picks||{};
     Object.keys(pk).forEach(k=>{ S.picks[k]=Object.values(pk[k]||{}).filter(x=>ACTS[x]); });
+    pendingMine.forEach(p=>{ S.picks[p.id]=(oldPicks[p.id]||[]).filter(x=>ACTS[x]); });
     if(S.active&&!S.people.find(p=>p.id===S.active)) S.active=S.people.length?S.people[0].id:null;
     save(true); renderAll(); syncUrl();
     applyingRemote=false;
+    if(pendingMine.length) partyQueue();
     if(isOrganizer()&&!S.roomOrgP){
       const mine=S.people.find(p=>claimed.has(p.id));
       if(mine){ S.roomOrgP=mine.id; FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room),{orgP:mine.id}); }
