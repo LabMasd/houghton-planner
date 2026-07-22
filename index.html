@@ -609,6 +609,7 @@ function openPersonSheet(p,onDone){
     rst.textContent='Reset passcode';
     rst.onclick=()=>{
       p.pin=null;
+      if(FB) FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room+'/people/'+p.id),{pin:null});
       claimed.delete(p.id); S.claims=[...claimed];
       save(); closeSheet(); renderAll();
     };
@@ -729,9 +730,9 @@ function subscribeRoom(id){
     save(true); renderAll(); syncUrl();
     applyingRemote=false;
     if(pendingMine.length) partyQueue();
-    if(isOrganizer()&&!S.roomOrgP){
+    if(isOrganizer()&&(!S.roomOrgP||!S.people.find(p=>p.id===S.roomOrgP))){
       const mine=S.people.find(p=>claimed.has(p.id));
-      if(mine){ S.roomOrgP=mine.id; FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room),{orgP:mine.id}); }
+      if(mine&&S.roomOrgP!==mine.id){ S.roomOrgP=mine.id; FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room),{orgP:mine.id}); }
     }
     if(pendingWho){
       pendingWho=false;
@@ -748,7 +749,7 @@ function partyQueue(){
     pids.forEach(pid=>{
       const p=S.people.find(x=>x.id===pid);
       if(!p) return;
-      FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room+'/people/'+pid),{name:p.name,color:p.color,pin:p.pin||null});
+      FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room+'/people/'+pid),{name:p.name,color:p.color});
       FB.m.set(FB.m.ref(FB.db,'rooms/'+S.room+'/picks/'+pid),picksOf(pid));
     });
   },400);
@@ -851,7 +852,10 @@ function openClaimSheet(pid,onOk){
     const pin=inp.value.trim();
     if(!/^\d{4}$/.test(pin)){ inp.focus(); return; }
     const h=await sha(pin);
-    if(isNew){ p.pin=h; }
+    if(isNew){
+      p.pin=h;
+      if(FIREBASE_CONFIG&&S.room&&FB) FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room+'/people/'+pid),{pin:h});
+    }
     else if(p.pin!==h){ document.getElementById('pinErr').style.display='block'; inp.value=''; inp.focus(); return; }
     claimed.add(pid); S.claims=[...claimed]; S.active=pid;
     save(); closeSheet(); renderAll();
