@@ -24,8 +24,9 @@ header{border-bottom:2px solid var(--ink);background:var(--paper);position:relat
 .masthead{display:flex;align-items:baseline;gap:8px;padding:10px 12px 4px}
 .masthead h1{font-weight:800;font-size:20px;letter-spacing:-.01em;text-transform:uppercase}
 .masthead .sub{font-size:12px;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
-.masthead .share{margin-left:auto;border:1.5px solid var(--ink);padding:3px 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.masthead .share{border:1.5px solid var(--ink);padding:3px 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
 .masthead .share:active{background:var(--ink);color:var(--paper)}
+.masthead #searchBtn{margin-left:auto}
 .people{display:flex;gap:6px;padding:6px 12px 8px;overflow-x:auto;scrollbar-width:none}
 .people::-webkit-scrollbar{display:none}
 .pchip{display:flex;align-items:center;gap:6px;border:1.5px solid var(--ink);padding:4px 10px;font-size:13px;
@@ -65,7 +66,18 @@ main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
 .act .nm{font-size:12px;line-height:1.1;font-weight:600;letter-spacing:.02em;
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--cl,4);overflow:hidden}
 .act .tm{font-size:9.5px;opacity:.75;margin-top:1px}
+.act.g2{background:#DEDEDE;border-color:#ABABAB}
 .act.others{background:var(--paper);border:2px solid var(--ink);color:var(--ink);z-index:1}
+.act.flash{animation:aflash 1.8s ease-out}
+@keyframes aflash{0%{box-shadow:0 0 0 5px #2196F3}70%{box-shadow:0 0 0 5px #2196F3}100%{box-shadow:0 0 0 0 rgba(33,150,243,0)}}
+.sr{display:flex;gap:10px;border:1px solid #BDBDBD;padding:8px 10px;margin-bottom:6px;align-items:center;cursor:pointer;background:var(--paper)}
+.sr .d{flex:0 0 78px;font-size:11px;font-weight:700;text-transform:uppercase;line-height:1.3}
+.sr .d small{display:block;font-weight:400;opacity:.7}
+.sr .a{flex:1;min-width:0;font-size:14px;font-weight:600;text-transform:uppercase;line-height:1.15}
+.sr .a small{display:block;font-size:10.5px;font-weight:400;letter-spacing:.08em;opacity:.7;margin-top:1px}
+.sr .go{flex:0 0 auto;border:1.5px solid currentColor;padding:4px 9px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:none;color:inherit}
+.sr.picked{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.snores{font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;padding:14px 2px}
 .act.sm{padding:1px 2px 7px}
 .act.sm .nm{font-size:10px}
 .act.sm .tm{display:none}
@@ -134,6 +146,7 @@ main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
 <header id="hdr">
   <div class="masthead">
     <h1>Houghton 2026</h1><span class="sub">planner</span>
+    <button class="share" id="searchBtn">Search</button>
     <button class="share" id="shareBtn">Share</button>
   </div>
   <div class="people" id="peopleRow"></div>
@@ -169,6 +182,7 @@ try { S = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e){ S = null; }
 if (!S || !S.people || !S.people.length) {
   S = { people:[{id:'p1',name:'ME',color:COLORS[0]}], picks:{p1:[]}, active:'p1', day:'thu', view:'grid' };
 }
+if(!S.planDay) S.planDay='all';
 S.people.forEach((p,i)=>{ if(!COLORS.includes(p.color)) p.color=COLORS[i%COLORS.length]; });
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function person(id){ return S.people.find(p=>p.id===id); }
@@ -195,9 +209,10 @@ function renderTabs(){
   DAYS.forEach(d=>{
     const n = picksOf(S.active).filter(x=>ACTS[x].day===d).length;
     const b=document.createElement('button');
-    b.className='dtab'+(d===S.day?' on':'');
+    const on = S.view==='plan' ? (S.planDay===d) : (S.day===d);
+    b.className='dtab'+(on?' on':'');
     b.innerHTML=DAYNAMES[d].slice(0,3)+(n?`<span class="cnt">${n}</span>`:'');
-    b.onclick=()=>{ S.day=d; save(); renderAll(); };
+    b.onclick=()=>{ S.day=d; if(S.view==='plan') S.planDay=(S.planDay===d?'all':d); save(); renderAll(); };
     dt.appendChild(b);
   });
   document.getElementById('vGrid').className='vtab'+(S.view==='grid'?' on':'');
@@ -236,13 +251,14 @@ function renderGrid(){
       n.innerHTML='<div class="nm">Open 24 hours<br><br>Secret line-up —<br>artists not announced</div>';
       col.appendChild(n);
     }
-    acts.filter(a=>a.stage===s).forEach(a=>{
+    acts.filter(a=>a.stage===s).forEach((a,ai)=>{
       const id=aid(day,a);
       const el=document.createElement('button');
       const durPx=(a.end-a.start)/60*HOUR;
       const mine=picksOf(S.active).includes(id);
       const others=!mine&&S.people.some(p=>picksOf(p.id).includes(id));
-      el.className='act'+(durPx<34?' sm':'')+(mine?' mine':'')+(others?' others':'');
+      el.className='act'+(durPx<34?' sm':'')+(ai%2?' g2':'')+(mine?' mine':'')+(others?' others':'');
+      el.dataset.aid=id;
       el.style.top=(a.start/60*HOUR)+'px';
       el.style.height=Math.max(durPx-2,16)+'px';
       const showTm=durPx>=56;
@@ -282,11 +298,9 @@ function togglePick(id){
 // ---------- plan ----------
 let planFilter='all';
 function renderPlan(){
-  const day=S.day;
   const main=document.getElementById('main');
   const el=document.createElement('div'); el.id='plan';
-  el.innerHTML=`<div class="dayTitle">${DAYNAMES[day]}</div>`;
-  // filters
+  // person filter
   const fr=document.createElement('div'); fr.className='filterRow';
   const mk=(key,label,color)=>{
     const b=document.createElement('button');
@@ -298,41 +312,59 @@ function renderPlan(){
   mk('all','Everyone');
   S.people.forEach(p=>mk(p.id,p.name,p.color));
   el.appendChild(fr);
+  // day filter
+  const dr=document.createElement('div'); dr.className='filterRow';
+  const mkd=(key,label)=>{
+    const b=document.createElement('button');
+    b.className='fchip'+(S.planDay===key?' on':'');
+    b.textContent=label;
+    b.onclick=()=>{ S.planDay=key; if(key!=='all') S.day=key; save(); renderAll(); };
+    dr.appendChild(b);
+  };
+  mkd('all','All days');
+  DAYS.forEach(d=>mkd(d,DAYNAMES[d].slice(0,3)));
+  el.appendChild(dr);
 
-  const ids=new Set();
+  const showDays = S.planDay==='all' ? DAYS : [S.planDay];
   const inFilter = planFilter==='all' ? S.people.map(p=>p.id) : [planFilter];
-  inFilter.forEach(pid=>picksOf(pid).forEach(x=>{ if(ACTS[x].day===day) ids.add(x); }));
-  const list=[...ids].map(x=>ACTS[x]).sort((a,b)=>a.start-b.start||a.end-b.end);
-
-  // per-person clashes for this day
-  const clashes=new Set();
-  S.people.forEach(p=>{
-    const mine=picksOf(p.id).filter(x=>ACTS[x].day===day).map(x=>ACTS[x]);
-    for(let i=0;i<mine.length;i++)for(let j=i+1;j<mine.length;j++){
-      const a=mine[i],b=mine[j];
-      if(a.start<b.end&&b.start<a.end){ clashes.add(aid(day,a)); clashes.add(aid(day,b)); }
-    }
+  let any=false;
+  showDays.forEach(day=>{
+    const ids=new Set();
+    inFilter.forEach(pid=>picksOf(pid).forEach(x=>{ if(ACTS[x].day===day) ids.add(x); }));
+    const list=[...ids].map(x=>ACTS[x]).sort((a,b)=>a.start-b.start||a.end-b.end);
+    if(!list.length) return;
+    any=true;
+    const h=document.createElement('div'); h.className='dayTitle'; h.textContent=DAYNAMES[day];
+    el.appendChild(h);
+    // per-person clashes for this day
+    const clashes=new Set();
+    S.people.forEach(p=>{
+      const mine=picksOf(p.id).filter(x=>ACTS[x].day===day).map(x=>ACTS[x]);
+      for(let i=0;i<mine.length;i++)for(let j=i+1;j<mine.length;j++){
+        const a=mine[i],b=mine[j];
+        if(a.start<b.end&&b.start<a.end){ clashes.add(aid(day,a)); clashes.add(aid(day,b)); }
+      }
+    });
+    list.forEach(a=>{
+      const id=aid(day,a);
+      const who=S.people.filter(p=>picksOf(p.id).includes(id));
+      const everyone=S.people.length>1&&who.length===S.people.length;
+      const clash=clashes.has(id)&&(planFilter==='all'||who.some(p=>p.id===planFilter));
+      const e=document.createElement('div');
+      e.className='entry'+(clash?' clash':'');
+      e.innerHTML=`
+        <div class="when"><div class="s">${fmt(a.start)}</div><div class="e">till ${fmt(a.end)}</div></div>
+        <div class="what">
+          <div class="a">${esc(a.artist)}${clash?'<span class="tag cl">clash</span>':''}${everyone?'<span class="tag all">everyone</span>':''}</div>
+          <div class="st">${esc(titleStage(a.stage))}</div>
+          <div class="who">${who.map(p=>`<span class="wchip"><span class="pd" style="background:${p.color}"></span>${esc(p.name)}</span>`).join('')}</div>
+        </div>`;
+      el.appendChild(e);
+    });
   });
-
-  if(!list.length){
-    el.innerHTML+=`<div class="empty">No picks for ${DAYNAMES[day]} yet.<br>Flip to Grid and tap the sets you want.</div>`;
+  if(!any){
+    el.innerHTML+=`<div class="empty">No picks yet.<br>Flip to Grid or hit Search and tap the sets you want.</div>`;
   }
-  list.forEach(a=>{
-    const id=aid(day,a);
-    const who=S.people.filter(p=>picksOf(p.id).includes(id));
-    const everyone=S.people.length>1&&who.length===S.people.length;
-    const clash=clashes.has(id)&&(planFilter==='all'||who.some(p=>p.id===planFilter));
-    const e=document.createElement('div');
-    e.className='entry'+(clash?' clash':'');
-    e.innerHTML=`
-      <div class="when"><div class="s">${fmt(a.start)}</div><div class="e">till ${fmt(a.end)}</div></div>
-      <div class="what">
-        <div class="a">${esc(a.artist)}${clash?'<span class="tag cl">clash</span>':''}${everyone?'<span class="tag all">everyone</span>':''}</div>
-        <div class="st">${esc(titleStage(a.stage))}</div>
-        <div class="who">${who.map(p=>`<span class="wchip"><span class="pd" style="background:${p.color}"></span>${esc(p.name)}</span>`).join('')}</div>
-      </div>`;
-    el.appendChild(e);
-  });
   main.innerHTML=''; main.appendChild(el);
 }
 
@@ -416,6 +448,62 @@ async function copy(text,btn){
   }
   const old=btn.textContent; btn.textContent='Copied ✓';
   setTimeout(()=>{ btn.textContent=old; },1500);
+}
+
+// ---------- search ----------
+document.getElementById('searchBtn').onclick=openSearch;
+function openSearch(){
+  const sheet=document.getElementById('sheet');
+  sheet.className='open';
+  sheet.innerHTML=`<div class="sheetIn">
+    <h2>Search</h2>
+    <div class="srow"><input class="sin" id="sq" placeholder="Artist, stage or day" autocomplete="off"></div>
+    <div id="sres"></div>
+    <div class="srow" style="margin-top:8px"><button class="sbtn" id="sqClose">Close</button></div>
+  </div>`;
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  document.getElementById('sqClose').onclick=closeSheet;
+  const input=document.getElementById('sq');
+  input.oninput=()=>renderResults(input.value);
+  input.focus();
+}
+function renderResults(q){
+  const box=document.getElementById('sres');
+  if(!box) return;
+  q=(q||'').trim().toLowerCase();
+  box.innerHTML='';
+  if(q.length<2){ return; }
+  const hits=Object.entries(ACTS).filter(([id,a])=>
+      a.artist.toLowerCase().includes(q)||a.stage.toLowerCase().includes(q)||DAYNAMES[a.day].toLowerCase().includes(q))
+    .sort((x,y)=>DAYS.indexOf(x[1].day)-DAYS.indexOf(y[1].day)||x[1].start-y[1].start)
+    .slice(0,60);
+  if(!hits.length){ box.innerHTML='<div class="snores">Nothing matches. Try part of a name.</div>'; return; }
+  hits.forEach(([id,a])=>{
+    const row=document.createElement('div');
+    const picked=picksOf(S.active).includes(id);
+    row.className='sr'+(picked?' picked':'');
+    row.innerHTML=`
+      <div class="d">${DAYNAMES[a.day].slice(0,3)}<small>${fmt(a.start)}–${fmt(a.end)}</small></div>
+      <div class="a">${esc(a.artist)}<small>${esc(titleStage(a.stage))}</small></div>
+      <button class="go">Go</button>`;
+    row.onclick=()=>{ togglePick(id); renderResults(q); };
+    row.querySelector('.go').onclick=e=>{ e.stopPropagation(); jumpTo(id); };
+    box.appendChild(row);
+  });
+}
+function jumpTo(id){
+  closeSheet();
+  const a=ACTS[id];
+  S.day=a.day; S.view='grid'; save(); renderAll();
+  requestAnimationFrame(()=>{
+    const wrap=document.getElementById('gridWrap');
+    const el=wrap&&wrap.querySelector(`[data-aid="${CSS.escape(id)}"]`);
+    if(!el) return;
+    wrap.scrollTop=Math.max(0,el.offsetTop-90);
+    wrap.scrollLeft=Math.max(0,el.parentElement.offsetLeft-60);
+    el.classList.add('flash');
+    setTimeout(()=>el.classList.remove('flash'),1900);
+  });
 }
 
 // import from hash
