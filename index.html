@@ -217,7 +217,7 @@ S.people.forEach(p=>{
     p.color=ALLCOLORS.find(c=>!t.includes(c))||ALLCOLORS[0];
   }
 });
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function save(skipPush){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} if(!skipPush) partyQueue(); }
 function person(id){ return S.people.find(p=>p.id===id); }
 function picksOf(id){ return (S.picks[id]||[]).filter(x=>ACTS[x]); }
 
@@ -363,6 +363,7 @@ function openActSheet(id){
   sheet.querySelectorAll('.pbig').forEach(b=>{
     b.onclick=()=>{
       const pid=b.dataset.p;
+      if(!canEdit(pid)){ openClaimSheet(pid,()=>openActSheet(id)); return; }
       const arr=S.picks[pid]||(S.picks[pid]=[]);
       const i=arr.indexOf(id);
       if(i>=0) arr.splice(i,1); else arr.push(id);
@@ -500,13 +501,15 @@ function openPersonSheet(p){
   ok.onclick=()=>{
     const nm=input.value.trim().toUpperCase();
     if(!nm){ input.focus(); return; }
-    if(p){ p.name=nm; p.color=sel; }
+    if(p){ p.name=nm; p.color=sel; save(); closeSheet(); renderAll(); }
     else{
       const id='p'+Date.now();
       S.people.push({id,name:nm,color:sel});
       S.picks[id]=[]; S.active=id;
+      if(FIREBASE_CONFIG&&S.room){ claimed.add(id); S.claims=[...claimed]; }
+      save(); closeSheet(); renderAll();
+      if(FIREBASE_CONFIG&&S.room) openClaimSheet(id);
     }
-    save(); closeSheet(); renderAll();
   };
   r2.appendChild(ok);
   const cancel=document.createElement('button'); cancel.className='sbtn'; cancel.textContent='Cancel';
@@ -516,6 +519,8 @@ function openPersonSheet(p){
     const del=document.createElement('button'); del.className='sbtn danger';
     del.textContent='Remove';
     del.onclick=()=>{
+      partyRemovePerson(p.id);
+      claimed.delete(p.id); S.claims=[...claimed];
       S.people=S.people.filter(x=>x.id!==p.id); delete S.picks[p.id];
       if(S.active===p.id) S.active=S.people.length?S.people[0].id:null;
       save(); closeSheet(); renderAll();
@@ -555,13 +560,162 @@ function openPersonView(p){
   </div>`;
   sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
   document.getElementById('pvClose').onclick=closeSheet;
-  document.getElementById('pvEdit').onclick=()=>openPersonSheet(p);
+  document.getElementById('pvEdit').onclick=()=>{
+    if(!canEdit(p.id)){ openClaimSheet(p.id,()=>openPersonSheet(p)); return; }
+    openPersonSheet(p);
+  };
+}
+
+// ---------- party mode (Firebase live sync) ----------
+const FIREBASE_CONFIG = null; /* paste your firebaseConfig object here to enable party mode */
+let FB=null, myUid=null, roomUnsub=null, applyingRemote=false, pushTimer=null;
+const claimed=new Set();
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('htn26:'+s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+function inParty(){ return !!(FIREBASE_CONFIG && S.room && FB); }
+function isOrganizer(){ return inParty() && S.roomOrg===myUid; }
+function canEdit(pid){ if(!(FIREBASE_CONFIG&&S.room)) return true; return claimed.has(pid)||isOrganizer(); }
+async function initParty(){
+  if(!FIREBASE_CONFIG) return;
+  try{
+    const V='10.12.2';
+    const [appM,authM,dbM]=await Promise.all([
+      import('https://www.gstatic.com/firebasejs/'+V+'/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/'+V+'/firebase-auth.js'),
+      import('https://www.gstatic.com/firebasejs/'+V+'/firebase-database.js')]);
+    const app=appM.initializeApp(FIREBASE_CONFIG);
+    const auth=authM.getAuth(app);
+    await authM.signInAnonymously(auth);
+    myUid=auth.currentUser.uid;
+    FB={db:dbM.getDatabase(app),m:dbM};
+    (S.claims||[]).forEach(pid=>claimed.add(pid));
+    if(S.room) subscribeRoom(S.room);
+  }catch(e){ console.warn('party init failed',e); }
+}
+function subscribeRoom(id){
+  if(!FB) return;
+  if(roomUnsub) roomUnsub();
+  roomUnsub=FB.m.onValue(FB.m.ref(FB.db,'rooms/'+id),snap=>{
+    const v=snap.val();
+    if(!v){ leaveParty(); return; }
+    applyingRemote=true;
+    S.room=id; S.roomName=v.name||'Party'; S.roomOrg=v.org;
+    const ppl=v.people||{};
+    S.people=Object.keys(ppl).sort((a,b)=>(ppl[a].ts||0)-(ppl[b].ts||0))
+      .map(k=>({id:k,name:ppl[k].name,color:ppl[k].color,pin:ppl[k].pin||null}));
+    S.picks={};
+    const pk=v.picks||{};
+    Object.keys(pk).forEach(k=>{ S.picks[k]=Object.values(pk[k]||{}).filter(x=>ACTS[x]); });
+    if(S.active&&!S.people.find(p=>p.id===S.active)) S.active=S.people.length?S.people[0].id:null;
+    save(true); renderAll();
+    applyingRemote=false;
+  });
+}
+function partyQueue(){
+  if(!inParty()||applyingRemote) return;
+  clearTimeout(pushTimer);
+  pushTimer=setTimeout(()=>{
+    const pids=isOrganizer()?S.people.map(p=>p.id):S.people.filter(p=>claimed.has(p.id)).map(p=>p.id);
+    pids.forEach(pid=>{
+      const p=S.people.find(x=>x.id===pid);
+      if(!p) return;
+      FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room+'/people/'+pid),{name:p.name,color:p.color,pin:p.pin||null});
+      FB.m.set(FB.m.ref(FB.db,'rooms/'+S.room+'/picks/'+pid),picksOf(pid));
+    });
+  },400);
+}
+function partyRemovePerson(pid){
+  if(!inParty()) return;
+  FB.m.remove(FB.m.ref(FB.db,'rooms/'+S.room+'/people/'+pid));
+  FB.m.remove(FB.m.ref(FB.db,'rooms/'+S.room+'/picks/'+pid));
+}
+async function createParty(name){
+  const id=Array.from(crypto.getRandomValues(new Uint8Array(9))).map(b=>'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'[b%54]).join('');
+  const people={},picks={};
+  S.people.forEach((p,i)=>{ people[p.id]={name:p.name,color:p.color,pin:p.pin||null,ts:i}; picks[p.id]=picksOf(p.id); claimed.add(p.id); });
+  S.claims=[...claimed];
+  await FB.m.set(FB.m.ref(FB.db,'rooms/'+id),{name:name||'Houghton party',org:myUid,created:{'.sv':'timestamp'},people,picks});
+  S.room=id; save(true); subscribeRoom(id);
+}
+function leaveParty(){
+  if(roomUnsub){ roomUnsub(); roomUnsub=null; }
+  S.room=null; S.roomOrg=null; S.roomName=null;
+  save(true); renderAll();
+}
+function partyLink(){ return location.origin+location.pathname+'#r='+S.room; }
+function openClaimSheet(pid,onOk){
+  const p=S.people.find(x=>x.id===pid);
+  if(!p) return;
+  const sheet=document.getElementById('sheet');
+  sheet.className='open center';
+  const isNew=!p.pin;
+  sheet.innerHTML=`<div class="sheetIn modal">
+    <h2>${isNew?'Claim':'Unlock'} ${esc(p.name)}</h2>
+    <div class="shint">${isNew?'Set a 4-digit passcode so only you can edit '+esc(p.name)+"'s picks.":'Enter '+esc(p.name)+"'s 4-digit passcode."}</div>
+    <div class="srow"><input class="sin" id="pinIn" inputmode="numeric" maxlength="4" placeholder="••••" style="text-align:center;letter-spacing:.4em;font-size:22px"></div>
+    <div class="srow"><button class="sbtn solid" id="pinOk">${isNew?'Claim':'Unlock'}</button><button class="sbtn" id="pinNo">Cancel</button></div>
+    <div class="shint" id="pinErr" style="color:var(--red);display:none">Wrong passcode — try again.</div>
+  </div>`;
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  document.getElementById('pinNo').onclick=closeSheet;
+  const inp=document.getElementById('pinIn');
+  document.getElementById('pinOk').onclick=async()=>{
+    const pin=inp.value.trim();
+    if(!/^\d{4}$/.test(pin)){ inp.focus(); return; }
+    const h=await sha(pin);
+    if(isNew){ p.pin=h; }
+    else if(p.pin!==h){ document.getElementById('pinErr').style.display='block'; inp.value=''; inp.focus(); return; }
+    claimed.add(pid); S.claims=[...claimed];
+    save(); closeSheet(); renderAll();
+    if(onOk) onOk();
+  };
+  inp.focus();
+}
+function openPartySheet(){
+  const sheet=document.getElementById('sheet');
+  sheet.className='open';
+  if(!S.room){
+    sheet.innerHTML=`<div class="sheetIn">
+      <h2>Party</h2>
+      <div class="shint">Start a live party: everyone opens one link, claims their name with a passcode, and picks sync to the whole group instantly.</div>
+      <div class="srow"><input class="sin" id="ptName" placeholder="Party name" maxlength="24" value="HOUGHTON 2026"></div>
+      <div class="srow"><button class="sbtn solid" id="ptStart">Start party</button></div>
+      <div class="shint">Your current people and picks come with you. Or open a party link someone sent you.</div>
+      <div class="srow"><button class="sbtn" id="ptOffline">Offline share links</button><button class="sbtn" id="ptClose">Close</button></div>
+    </div>`;
+    sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+    document.getElementById('ptClose').onclick=closeSheet;
+    document.getElementById('ptOffline').onclick=openShareSheet;
+    document.getElementById('ptStart').onclick=async ev=>{
+      ev.target.textContent='Starting…';
+      await createParty(document.getElementById('ptName').value.trim());
+      openPartySheet();
+    };
+    return;
+  }
+  const members=S.people.map(p=>{
+    const mine=claimed.has(p.id);
+    return `<div class="pvrow"><span class="pd" style="background:${p.color}"></span>
+      <span class="n">${esc(p.name)}</span>
+      <span class="s">${mine?'YOURS':(p.pin?'CLAIMED':'UNCLAIMED')}</span></div>`;
+  }).join('');
+  sheet.innerHTML=`<div class="sheetIn">
+    <h2>${esc(S.roomName||'Party')}</h2>
+    <div class="shint">${isOrganizer()?'You are the organizer. ':''}Send this link — friends open it, claim their name (or join), set a passcode, and everything syncs live.</div>
+    <div class="srow"><button class="sbtn solid" id="ptCopy">Copy party link</button></div>
+    ${members}
+    <div class="srow" style="margin-top:12px"><button class="sbtn" id="ptLeave">Leave party</button><button class="sbtn" id="ptClose">Close</button></div>
+  </div>`;
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  document.getElementById('ptClose').onclick=closeSheet;
+  document.getElementById('ptCopy').onclick=ev=>copy(partyLink(),ev.target);
+  document.getElementById('ptLeave').onclick=()=>{ leaveParty(); closeSheet(); };
 }
 
 // ---------- share ----------
 function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
 function b64d(s){ return decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))); }
-document.getElementById('shareBtn').onclick=()=>{
+document.getElementById('shareBtn').onclick=()=>{ if(FIREBASE_CONFIG){ openPartySheet(); } else { openShareSheet(); } };
+function openShareSheet(){
   const sheet=document.getElementById('sheet');
   sheet.className='open';
   if(!S.people.length){
@@ -662,6 +816,27 @@ function jumpTo(id){
 
 // import from hash
 function checkImport(){
+  const rm=location.hash.match(/#r=([A-Za-z0-9_\-]+)/);
+  if(rm){
+    history.replaceState(null,'',location.pathname+location.search);
+    const banner=document.getElementById('banner');
+    if(!FIREBASE_CONFIG){
+      banner.className='show';
+      banner.innerHTML=`<div class="bIn"><span class="msg">This is a live party link, but this version isn't connected. Ask for an offline share link instead.</span><button class="pri" id="impNo">OK</button></div>`;
+      document.getElementById('impNo').onclick=()=>{ banner.className=''; banner.innerHTML=''; };
+      return;
+    }
+    banner.className='show';
+    banner.innerHTML=`<div class="bIn"><span class="msg">Join this party? Your view switches to the group's live plan.</span>
+      <button class="pri" id="prYes">Join</button><button id="prNo">Not now</button></div>`;
+    document.getElementById('prYes').onclick=()=>{
+      banner.className=''; banner.innerHTML='';
+      S.room=rm[1]; save(true);
+      if(FB) subscribeRoom(S.room);
+    };
+    document.getElementById('prNo').onclick=()=>{ banner.className=''; banner.innerHTML=''; };
+    return;
+  }
   const m=location.hash.match(/#i=([A-Za-z0-9_\-]+)/);
   if(!m) return;
   let payload=null;
@@ -703,6 +878,7 @@ function renderAll(){
 window.addEventListener('resize',()=>{ document.getElementById('main').style.top=document.getElementById('hdr').offsetHeight+'px'; });
 renderAll();
 checkImport();
+initParty();
 if(!S.people.length && !document.getElementById('banner').classList.contains('show')) openPersonSheet(null);
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
