@@ -358,7 +358,7 @@ function togglePick(id){
 function openActSheet(id){
   const a=ACTS[id];
   const sheet=document.getElementById('sheet');
-  sheet.className='open';
+  sheet.className='open center';
   let body;
   if(!S.people.length){
     body=`<div class="shint">Add a person first, then tap sets to mark who's going.</div>
@@ -372,7 +372,7 @@ function openActSheet(id){
         <span class="st2">${going?'Going ✓':'Not going'}</span></button>`;
     }).join('');
   }
-  sheet.innerHTML=`<div class="sheetIn">
+  sheet.innerHTML=`<div class="sheetIn modal">
     <h2>${esc(a.artist)}</h2>
     <div class="shint">${DAYNAMES[a.day]} · ${fmt(a.start)}–${fmt(a.end)} · ${esc(titleStage(a.stage))}</div>
     ${body}
@@ -636,7 +636,7 @@ function closeSheet(){ const s=document.getElementById('sheet'); s.className='';
 // ---------- person schedule view ----------
 function openPersonView(p){
   const sheet=document.getElementById('sheet');
-  sheet.className='open';
+  sheet.className='open center';
   const picks=picksOf(p.id);
   let body='';
   DAYS.forEach(day=>{
@@ -649,7 +649,7 @@ function openPersonView(p){
     });
   });
   if(!body) body='<div class="shint">No picks yet — tap sets in the grid or use Search.</div>';
-  sheet.innerHTML=`<div class="sheetIn">
+  sheet.innerHTML=`<div class="sheetIn modal wide">
     <h2><span class="pd" style="background:${p.color};width:12px;height:12px;margin-right:6px"></span>${esc(p.name)}${hostTag(p)}</h2>
     ${body}
     <div class="srow" style="margin-top:10px">
@@ -966,8 +966,8 @@ async function copy(text,btn){
 document.getElementById('searchBtn').onclick=openSearch;
 function openSearch(){
   const sheet=document.getElementById('sheet');
-  sheet.className='open';
-  sheet.innerHTML=`<div class="sheetIn">
+  sheet.className='open center';
+  sheet.innerHTML=`<div class="sheetIn modal wide">
     <h2>Search</h2>
     <div class="srow"><input class="sin" id="sq" placeholder="Artist, stage or day" autocomplete="off"></div>
     <div id="sres"></div>
