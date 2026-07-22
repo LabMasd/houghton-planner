@@ -1,0 +1,5 @@
+pipeline/venv/
+pipeline/pdf_*.json
+pipeline/acts_raw.json
+pipeline/acts2.json
+pipeline/acts3.json

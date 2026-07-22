@@ -1,0 +1,2074 @@
+{
+ "thu": [
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "HARRI PEPPER",
+   "start": 480,
+   "end": 660
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "STE ROBERTS",
+   "start": 660,
+   "end": 810
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "RADIOACTIVE MAN (LIVE)",
+   "start": 810,
+   "end": 900
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "ELECTRO ELVIS",
+   "start": 480,
+   "end": 600
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "ALEX DOWNEY",
+   "start": 600,
+   "end": 780
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "NULLPTR (LIVE)",
+   "start": 780,
+   "end": 840
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "BILLY NASTY",
+   "start": 840,
+   "end": 960
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "ACTIVE SYSTEMS",
+   "start": 960,
+   "end": 1020
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "ADAM CURTAIN",
+   "start": 480,
+   "end": 660
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "GABRIEL RAI",
+   "start": 660,
+   "end": 840
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "CHEZ DE MILO",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "HARRY MCCANNA",
+   "start": 480,
+   "end": 660
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "DAN ANDREI",
+   "start": 660,
+   "end": 840
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "SONJA MOONEAR",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "ADAM SHELTON",
+   "start": 480,
+   "end": 660
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "WAYNE HOLLAND",
+   "start": 660,
+   "end": 840
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "FELIX DICKINSON",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "BAS IBELLINI",
+   "start": 480,
+   "end": 660
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "WILLOW",
+   "start": 660,
+   "end": 840
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "VERA",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "JAKE MANDERS",
+   "start": 480,
+   "end": 660
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "DR HORN",
+   "start": 660,
+   "end": 840
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "DOC MARTIN",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "OLI SILVA",
+   "start": 480,
+   "end": 660
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "OM UNIT",
+   "start": 660,
+   "end": 840
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "OPTIMO",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "AMIT & ANEESH",
+   "start": 480,
+   "end": 540
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "DJ HIMITSU",
+   "start": 540,
+   "end": 660
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "CAMERON CULLEN",
+   "start": 660,
+   "end": 780
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "JONAS ROBINSON",
+   "start": 780,
+   "end": 900
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "JUAN BLANCO",
+   "start": 900,
+   "end": 1020
+  }
+ ],
+ "fri": [
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "HAMISH & TOBY",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "MOXIE",
+   "start": 360,
+   "end": 510
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "MIDLAND",
+   "start": 510,
+   "end": 660
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "JORG KUNING (LIVE)",
+   "start": 660,
+   "end": 720
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "CALL SUPER",
+   "start": 720,
+   "end": 870
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "JOSH CAFFÉ (LIVE)",
+   "start": 870,
+   "end": 930
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "SEDEF ADASI",
+   "start": 930,
+   "end": 1080
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "PATRICK ROWE",
+   "start": 60,
+   "end": 240
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "MAGUIRE (LIVE)",
+   "start": 240,
+   "end": 300
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "JENNY JEN",
+   "start": 300,
+   "end": 360
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "GREG PAULUS LIVE (LIVE)",
+   "start": 360,
+   "end": 420
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "AL WOOTTON (DJ SET)",
+   "start": 420,
+   "end": 480
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "PETER ADJAYE (LIVE)",
+   "start": 480,
+   "end": 540
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "KIAN OK",
+   "start": 540,
+   "end": 600
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "HOLY TONGUE (LIVE)",
+   "start": 600,
+   "end": 660
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "KYLE TOOLE",
+   "start": 660,
+   "end": 720
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "NÍDIA & VALENTINA (LIVE)",
+   "start": 720,
+   "end": 780
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "OPTIMO",
+   "start": 780,
+   "end": 840
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "AWKWARD MOMENTS (LIVE)",
+   "start": 840,
+   "end": 900
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "ARIO",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "AXIS 89 (LIVE)",
+   "start": 360,
+   "end": 420
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "CCL",
+   "start": 420,
+   "end": 570
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "SIMO CELL (LIVE)",
+   "start": 570,
+   "end": 600
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "RHYW",
+   "start": 600,
+   "end": 630
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "FADI MOHEM",
+   "start": 630,
+   "end": 780
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "RHYW",
+   "start": 780,
+   "end": 900
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "SEPEHR (LIVE)",
+   "start": 900,
+   "end": 960
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "PARIAH",
+   "start": 960,
+   "end": 1080
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "OBJEKT",
+   "start": 1080,
+   "end": 1200
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "ANNA WALL",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "BRUNO SCHMIDT",
+   "start": 360,
+   "end": 510
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "ADI",
+   "start": 510,
+   "end": 660
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "ENRICA FALQUI",
+   "start": 660,
+   "end": 840
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "BOBBY.",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "BINH",
+   "start": 1020,
+   "end": 1200
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "CRAIG RICHARDS (REGGAE SET)",
+   "start": 120,
+   "end": 180
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "CHANNEL ONE",
+   "start": 180,
+   "end": 300
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "LUKE UNA",
+   "start": 300,
+   "end": 480
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "PEACH",
+   "start": 480,
+   "end": 660
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "DRESDEN",
+   "start": 660,
+   "end": 840
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "MATHEW JONSON (LIVE)",
+   "start": 840,
+   "end": 930
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "CRAIG RICHARDS",
+   "start": 930,
+   "end": 1110
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "REPTANT (LIVE)",
+   "start": 1110,
+   "end": 1170
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "RHADOO",
+   "start": 1170,
+   "end": 1380
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "BAS IBELLINI",
+   "start": 180,
+   "end": 300
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "JONNY ROCK",
+   "start": 300,
+   "end": 420
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "ROB MELLO",
+   "start": 420,
+   "end": 600
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "REMI MAZET (LIVE)",
+   "start": 600,
+   "end": 660
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "H FOUNDATION (HIPP-E & HALO)",
+   "start": 660,
+   "end": 840
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "DOC MARTIN",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "RARESH",
+   "start": 1020,
+   "end": 1200
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "KYLE TOOLE",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "AOKI TAKAMASA",
+   "start": 360,
+   "end": 540
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "DEADBEAT (LIVE)",
+   "start": 540,
+   "end": 600
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "O.BEE",
+   "start": 600,
+   "end": 780
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "MELCHIOR PRODUCTIONS LTD (LIVE)",
+   "start": 780,
+   "end": 840
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "MARGARET DYGAS",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "XDB",
+   "start": 1020,
+   "end": 1200
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "JENNY JEN",
+   "start": 60,
+   "end": 210
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "ITCHY RICH",
+   "start": 210,
+   "end": 360
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "PHIL SMART",
+   "start": 360,
+   "end": 540
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "SHAY MALT",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "DAN BEAUMONT",
+   "start": 720,
+   "end": 900
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "GIDEÖN",
+   "start": 900,
+   "end": 1080
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "GRACE SANDS",
+   "start": 1080,
+   "end": 1260
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "HAMISH TOBY & XDB",
+   "start": 1260,
+   "end": 1440
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "JONNY ROCK",
+   "start": 60,
+   "end": 180
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "KEM",
+   "start": 180,
+   "end": 300
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "KAY SUZUKI",
+   "start": 300,
+   "end": 420
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "MANASSEH",
+   "start": 420,
+   "end": 540
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "ABA SHANTI-I",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "PRINCE FATTY, HORSEMAN, LIAM BAILEY, IGNITION HIGH POWER AND MR WILLIAMZ",
+   "start": 720,
+   "end": 960
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "DEADBEAT (DJ SET)",
+   "start": 960,
+   "end": 1020
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "OM UNIT PRESENTS ACID DUB STUDIES",
+   "start": 1020,
+   "end": 1080
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "SIMO CELL (DUB SET)",
+   "start": 1080,
+   "end": 1140
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "AL WOOTTON (LIVE)",
+   "start": 1140,
+   "end": 1200
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "O.BEE & TOMAS STATION",
+   "start": 1380,
+   "end": 1440
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "HARRI PEPPER",
+   "start": 180,
+   "end": 300
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "BILL BREWSTER",
+   "start": 300,
+   "end": 420
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "JOSH T & DR BANANA",
+   "start": 420,
+   "end": 540
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "DAVE HARVEY",
+   "start": 540,
+   "end": 660
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "TRISTAN DA CUNHA",
+   "start": 660,
+   "end": 780
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "KAY SUZUKI",
+   "start": 780,
+   "end": 900
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "REDA",
+   "start": 900,
+   "end": 1020
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "CLAUDE",
+   "start": 1020,
+   "end": 1140
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "FABIEN",
+   "start": 1140,
+   "end": 1260
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "SCOTT PELLOUX",
+   "start": 1260,
+   "end": 1380
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "CAMERON CULLEN",
+   "start": 1380,
+   "end": 1440
+  },
+  {
+   "stage": "SCULPTURE GARDEN",
+   "artist": "TOURS",
+   "start": 60,
+   "end": 180
+  },
+  {
+   "stage": "SCULPTURE GARDEN",
+   "artist": "TOURS",
+   "start": 240,
+   "end": 660
+  },
+  {
+   "stage": "SCULPTURE GARDEN",
+   "artist": "TOURS",
+   "start": 1260,
+   "end": 1440
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "TBC",
+   "start": 0,
+   "end": 60
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "MORNING FLOW WITH ANDY KOBELINSKY",
+   "start": 60,
+   "end": 120
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "ROCKET WITH ADAM REDMORE",
+   "start": 120,
+   "end": 180
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "YAMUNA BODY ROLLING WITH GEMMA NASH",
+   "start": 210,
+   "end": 270
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "THAI MASSAGE WORKSHOP WITH PAUL BRUM",
+   "start": 300,
+   "end": 360
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "SOUNDBATH",
+   "start": 390,
+   "end": 450
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "LIFE DRAWING WITH SOPHIA SHUVALOVA",
+   "start": 480,
+   "end": 570
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "VERA",
+   "start": 780,
+   "end": 900
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "DANNY DAZE ::BLUE::",
+   "start": 900,
+   "end": 930
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "CHIDA",
+   "start": 930,
+   "end": 1020
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "OCCURENCE - REGGIE WATTS & DELWIN",
+   "start": 1020,
+   "end": 1080
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "ARIO",
+   "start": 1080,
+   "end": 1320
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "JAKE MANDERS",
+   "start": 120,
+   "end": 180
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "TALK: REGENERATIVE DESIGN: DEZEEN IN CONVERSATION WITH CELLA",
+   "start": 180,
+   "end": 240
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "MIDLAND (AMBIENT SET)",
+   "start": 240,
+   "end": 300
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "TALK: RYAN GANDER IN CONVERSATION WITH CRAIG RICHARDS",
+   "start": 300,
+   "end": 360
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "VERA",
+   "start": 360,
+   "end": 420
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "TALK: RA 'PLAYING FAVOURITES' WITH JANE",
+   "start": 420,
+   "end": 480
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "GABRIEL RAI",
+   "start": 480,
+   "end": 540
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "BABY VULTURE & E/TAPE",
+   "start": 540,
+   "end": 840
+  }
+ ],
+ "sat": [
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "HARRY MCCANNA",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "SAOIRSE",
+   "start": 360,
+   "end": 540
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "SHANTI CELESTE",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "UNDERGROUND RESISTANCE PRESENTS DEPTH",
+   "start": 720,
+   "end": 810
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "CRAIG RICHARDS",
+   "start": 810,
+   "end": 1020
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "DECIUS LIVE (75MINS)",
+   "start": 1020,
+   "end": 1110
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "JOFF (TRUTH & LIES)",
+   "start": 60,
+   "end": 120
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "ROBERT MITCHELL (LIVE SOLO PIANO)",
+   "start": 120,
+   "end": 180
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "TRUTH & LIES (EX-FRIENDLY)",
+   "start": 180,
+   "end": 240
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "ELIJAH MINNELLI (LIVE)",
+   "start": 240,
+   "end": 300
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "TRUTH & LIES",
+   "start": 300,
+   "end": 360
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "SVEN HAMMOND (LIVE)",
+   "start": 360,
+   "end": 420
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "CRAIG RICHARDS",
+   "start": 420,
+   "end": 480
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "REGGIE WATTS",
+   "start": 480,
+   "end": 540
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "CARL H",
+   "start": 540,
+   "end": 600
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "BRÌGHDE CHAIMBEUL (LIVE)",
+   "start": 600,
+   "end": 660
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "VLADA",
+   "start": 660,
+   "end": 720
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "SAMUEL ROHRER (LIVE)",
+   "start": 720,
+   "end": 780
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "AMIT & ANEESH",
+   "start": 780,
+   "end": 840
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "NIK BARTSCH'S RONIN (LIVE)",
+   "start": 840,
+   "end": 900
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "ALEX DOWNEY",
+   "start": 180,
+   "end": 330
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "STE ROBERTS (LIVE)",
+   "start": 330,
+   "end": 390
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "RADIOACTIVE MAN",
+   "start": 390,
+   "end": 480
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "HACKNEY ELECTRONICA (LIVE)",
+   "start": 480,
+   "end": 570
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "CRAIG RICHARDS (ELECTRO SET)",
+   "start": 570,
+   "end": 630
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "C.A.R (LIVE)",
+   "start": 630,
+   "end": 690
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "BRUNO SCHMIDT",
+   "start": 690,
+   "end": 840
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "Z@P",
+   "start": 840,
+   "end": 990
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "SLAM (LIVE)",
+   "start": 990,
+   "end": 1050
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "QUEST",
+   "start": 1050,
+   "end": 1200
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "OLI SILVA",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "LOLA HARO",
+   "start": 360,
+   "end": 540
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "DAVE HARVEY",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "CARL H",
+   "start": 720,
+   "end": 900
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "LAKE HAZE (LIVE)",
+   "start": 900,
+   "end": 960
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "UNAI TROTTI",
+   "start": 960,
+   "end": 1140
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "MOY (LIVE)",
+   "start": 1140,
+   "end": 1200
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "THE GHOST",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "GENE ON EARTH",
+   "start": 360,
+   "end": 540
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "DOMINIC CAPELLO",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "MATHEW JONSON & .VRIL (LIVE)",
+   "start": 720,
+   "end": 810
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "SUGAR FREE",
+   "start": 810,
+   "end": 990
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "AURORA HALAL",
+   "start": 990,
+   "end": 1170
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "DJ MASDA",
+   "start": 1170,
+   "end": 1380
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "TRISTAN DA CUNHA",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "GABRIELLE KWARTENG",
+   "start": 360,
+   "end": 540
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "PARAMIDA",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "FRANK HAAG (LIVE)",
+   "start": 720,
+   "end": 810
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "FRANCESCO DEL GARDA",
+   "start": 810,
+   "end": 990
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "JANE FITZ",
+   "start": 990,
+   "end": 1200
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "MELINA SERSER",
+   "start": 180,
+   "end": 420
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "VLADA",
+   "start": 420,
+   "end": 600
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "KONDUKU",
+   "start": 600,
+   "end": 780
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "PEVERELIST",
+   "start": 780,
+   "end": 840
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "ROMAN FLÜGEL",
+   "start": 840,
+   "end": 1020
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "IVAN SMAGGHE",
+   "start": 1020,
+   "end": 1200
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "JANE FITZ & PAQUITA GORDON",
+   "start": 0,
+   "end": 180
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "RENATA",
+   "start": 240,
+   "end": 360
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "JONNY ROCK",
+   "start": 360,
+   "end": 540
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "ROB MELLO",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "LUKE UNA",
+   "start": 720,
+   "end": 900
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "CHEZ DAMIER",
+   "start": 900,
+   "end": 1080
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "PROSUMER",
+   "start": 1080,
+   "end": 1260
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "DESYN",
+   "start": 1260,
+   "end": 1440
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "O.BEE & TOMAS STATION",
+   "start": 0,
+   "end": 120
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "PEACH (R&B SET)",
+   "start": 120,
+   "end": 240
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "RADIOACTIVE MAN (REGGAE SET)",
+   "start": 240,
+   "end": 300
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "UNCLE AL & SHERMAN",
+   "start": 300,
+   "end": 480
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "TOKYO RIDDIM BAND",
+   "start": 480,
+   "end": 540
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "GIDEÖN (REGGAE SET)",
+   "start": 540,
+   "end": 660
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "DONNA LEAKE",
+   "start": 660,
+   "end": 780
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "SCIENTIST (LIVE)",
+   "start": 780,
+   "end": 840
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "MARK ERNESTUS & TIKIMAN",
+   "start": 840,
+   "end": 960
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "CALIBRE",
+   "start": 960,
+   "end": 1080
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "NIDIA",
+   "start": 1080,
+   "end": 1200
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "KYLE TOOLE & KIAN OK",
+   "start": 1380,
+   "end": 1440
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "CAMERON CULLEN",
+   "start": 0,
+   "end": 60
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "KIAN OK",
+   "start": 60,
+   "end": 180
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "KYLE TOOLE",
+   "start": 180,
+   "end": 300
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "WAYNE HOLLAND",
+   "start": 300,
+   "end": 420
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "NICOLAS MATAR",
+   "start": 420,
+   "end": 540
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "FELIX DICKINSON",
+   "start": 540,
+   "end": 660
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "ELIPHINO",
+   "start": 660,
+   "end": 780
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "KRISHAN",
+   "start": 780,
+   "end": 900
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "BELLE BÊTE",
+   "start": 900,
+   "end": 1020
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "CEDRIC WOO",
+   "start": 1020,
+   "end": 1140
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "ANEESH",
+   "start": 1140,
+   "end": 1260
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "AMIT",
+   "start": 1260,
+   "end": 1380
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "JUAN BLANCO",
+   "start": 1380,
+   "end": 1440
+  },
+  {
+   "stage": "SCULPTURE GARDEN",
+   "artist": "TOURS",
+   "start": 0,
+   "end": 120
+  },
+  {
+   "stage": "SCULPTURE GARDEN",
+   "artist": "TOURS",
+   "start": 480,
+   "end": 720
+  },
+  {
+   "stage": "SCULPTURE GARDEN",
+   "artist": "TOURS",
+   "start": 1260,
+   "end": 1440
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "THE BEAT BOUTIQUE LIVE (4BEAT VINYASA)",
+   "start": 60,
+   "end": 120
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "ELIXIR (BARRE + PILATES)",
+   "start": 150,
+   "end": 210
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "YAMUNA BODY ROLLING",
+   "start": 240,
+   "end": 300
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "SOUNDBATH WITH MICHELLE CADE",
+   "start": 360,
+   "end": 420
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "BREATH TO UPLIFT WITH GIGI",
+   "start": 450,
+   "end": 510
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "LIFE DRAWING WITH SOPHIA SHUVALOVA",
+   "start": 510,
+   "end": 600
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "HARRY MCCANNA",
+   "start": 780,
+   "end": 840
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "HOWIE B & HIRAKI SAWA (LIVE)",
+   "start": 840,
+   "end": 900
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "5IVE",
+   "start": 900,
+   "end": 1020
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "JASON LINDNER & AUDIO CURRENCY",
+   "start": 1020,
+   "end": 1080
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "ETAPE AND BABY VULTURE",
+   "start": 1080,
+   "end": 1260
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "BOBBY.",
+   "start": 120,
+   "end": 180
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "TALK: AFROFUTURISM IN CONTEMPORARY ELECTRONIC MUSIC WITH SAUL WILLIAMS,",
+   "start": 180,
+   "end": 240
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "PROSUMER",
+   "start": 240,
+   "end": 300
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "TALK: TECHNOSHAMANISM WITH VIVIANA CARO, AL WOOTTON,",
+   "start": 300,
+   "end": 360
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "ROMAN FLUGEL",
+   "start": 360,
+   "end": 420
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "TALK: BALANCE PRESENTS WITH SHANTI CELESTE, LUKE UNA AND TOM COLVILLE",
+   "start": 420,
+   "end": 480
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "MAYBE LAURA",
+   "start": 480,
+   "end": 600
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "ARIO",
+   "start": 600,
+   "end": 780
+  }
+ ],
+ "sun": [
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "COAST 2 COAST (THE GHOST & GENE ON EARTH)",
+   "start": 120,
+   "end": 300
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "DR BANANA",
+   "start": 300,
+   "end": 480
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "DANNY DAZE",
+   "start": 480,
+   "end": 600
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "FREAKENSTEIN",
+   "start": 600,
+   "end": 720
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "HELENA HAUFF",
+   "start": 720,
+   "end": 840
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "MARIE DAVIDSON (LIVE)",
+   "start": 840,
+   "end": 900
+  },
+  {
+   "stage": "DERREN SMART STAGE",
+   "artist": "REPTANT (DJ SET)",
+   "start": 900,
+   "end": 1020
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "MILES WONDERFULSOUND",
+   "start": 60,
+   "end": 120
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "SVEN FIGEE (SOLO PIANO)",
+   "start": 120,
+   "end": 180
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "MILES WONDERFULSOUND",
+   "start": 180,
+   "end": 240
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "NIK BÄRTSCH (SOLO PIANO)",
+   "start": 240,
+   "end": 300
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "MILES WONDERFULSOUND",
+   "start": 300,
+   "end": 360
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "SHA & JAMES GILLIGAN (LIVE)",
+   "start": 360,
+   "end": 420
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "ADAM SHELTON",
+   "start": 420,
+   "end": 480
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "LOULA YORKE (LIVE)",
+   "start": 480,
+   "end": 540
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "MANFREDAS",
+   "start": 540,
+   "end": 600
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "MARY LATTIMORE (LIVE)",
+   "start": 600,
+   "end": 660
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "PARAMIDA (BALEARIC SET)",
+   "start": 660,
+   "end": 720
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "WARRINGTON-RUNCORN NEW TOWN DEVELOPMENT PLAN (LIVE)",
+   "start": 720,
+   "end": 780
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "HARRI PEPPER",
+   "start": 780,
+   "end": 840
+  },
+  {
+   "stage": "PINTERS",
+   "artist": "GREG PAULUS (LIVE)",
+   "start": 840,
+   "end": 900
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "ADAM SHELTON",
+   "start": 180,
+   "end": 330
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "CARL H",
+   "start": 330,
+   "end": 480
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "PAQUITA GORDON",
+   "start": 480,
+   "end": 660
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "AURORA HALAL (LIVE)",
+   "start": 660,
+   "end": 720
+  },
+  {
+   "stage": "THE WAREHOUSE",
+   "artist": "JOHN TALABOT",
+   "start": 720,
+   "end": 900
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "KIAN OK",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "JADE SEATLE",
+   "start": 360,
+   "end": 540
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "ELLIE STOKES",
+   "start": 540,
+   "end": 690
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "MARIIIN",
+   "start": 690,
+   "end": 840
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "Z@P (LIVE)",
+   "start": 840,
+   "end": 900
+  },
+  {
+   "stage": "THE QUARRY",
+   "artist": "NICOLAS LUTZ",
+   "start": 900,
+   "end": 1080
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "OBEE & TOMAS",
+   "start": 120,
+   "end": 300
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "RICARDO VILLALOBOS",
+   "start": 300,
+   "end": 480
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "DANDY JACK",
+   "start": 480,
+   "end": 540
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "OGAZÓN",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "CHRISTIAN AB",
+   "start": 720,
+   "end": 900
+  },
+  {
+   "stage": "THE PAVILION",
+   "artist": "BEN UFO",
+   "start": 900,
+   "end": 1080
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "FACTA & K-LONE",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "KIA",
+   "start": 360,
+   "end": 510
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "LIVWUTANG",
+   "start": 510,
+   "end": 660
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "PEVERELIST (LIVE)",
+   "start": 660,
+   "end": 720
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "BATU",
+   "start": 720,
+   "end": 840
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "OK WILLIAMS",
+   "start": 840,
+   "end": 960
+  },
+  {
+   "stage": "EARTHLING",
+   "artist": "DJRUM",
+   "start": 960,
+   "end": 1080
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "ANDY BAINBRIDGE (NOT AN ANIMAL)",
+   "start": 180,
+   "end": 360
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "DJ NATURE",
+   "start": 360,
+   "end": 540
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "5IVE",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "CHIDA",
+   "start": 720,
+   "end": 900
+  },
+  {
+   "stage": "OUTBURST",
+   "artist": "POWDER",
+   "start": 900,
+   "end": 1080
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "SHANTI CELESTE",
+   "start": 0,
+   "end": 180
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "HARRY & DAN PRESENT TEA DANCE",
+   "start": 240,
+   "end": 540
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "COLLEEN COSMO MURPHY",
+   "start": 540,
+   "end": 720
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "BILL BREWSTER",
+   "start": 720,
+   "end": 900
+  },
+  {
+   "stage": "STALLIONS",
+   "artist": "TAMA SUMO & LAKUTI",
+   "start": 900,
+   "end": 1080
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "KYLE TOOLE & KIAN OK",
+   "start": 0,
+   "end": 120
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "GREG PAULUS",
+   "start": 120,
+   "end": 180
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "DOUBLE AGENT 7",
+   "start": 180,
+   "end": 300
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "TRUTH & LIES",
+   "start": 300,
+   "end": 420
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "MANASSEH",
+   "start": 420,
+   "end": 540
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "CHRIS SULLIVAN",
+   "start": 540,
+   "end": 660
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "SWING & DINE FEAT. LLOYD MUSCLEHEAD (SAXON) GLADDY WAX, DAVID HILL TWINNY & TWINNO",
+   "start": 660,
+   "end": 960
+  },
+  {
+   "stage": "THE OLD GRAMOPHONE",
+   "artist": "PETER ADJAYE",
+   "start": 960,
+   "end": 1080
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "JUAN BLANCO",
+   "start": 0,
+   "end": 60
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "STUDIO BATSUMI",
+   "start": 60,
+   "end": 180
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "KEM",
+   "start": 180,
+   "end": 300
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "MANFREDAS",
+   "start": 300,
+   "end": 420
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "TIME IS AWAY",
+   "start": 420,
+   "end": 540
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "ROB MELLO",
+   "start": 540,
+   "end": 660
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "FABIAN",
+   "start": 660,
+   "end": 780
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "CLAUDE & KRISHAN",
+   "start": 780,
+   "end": 900
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "CEDRIC WOO & BELLE BETTE",
+   "start": 900,
+   "end": 1020
+  },
+  {
+   "stage": "GIANT STEPS",
+   "artist": "AMIT & ANEESH",
+   "start": 1020,
+   "end": 1080
+  },
+  {
+   "stage": "SCULPTURE GARDEN",
+   "artist": "TOURS",
+   "start": 0,
+   "end": 120
+  },
+  {
+   "stage": "SCULPTURE GARDEN",
+   "artist": "TOURS",
+   "start": 480,
+   "end": 720
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "FLOW AND GONG WITH LUCIA JIMÉNEZ & JULIM",
+   "start": 60,
+   "end": 150
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "SOUNDBATH WITH VERONIKA",
+   "start": 180,
+   "end": 240
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "TOM PARDHY LIFE CELEBRATION",
+   "start": 270,
+   "end": 330
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "TBC",
+   "start": 360,
+   "end": 420
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "LIFE DRAWING WITH SOPHIA",
+   "start": 450,
+   "end": 510
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "BREATHWORK BREATHE TO RESTORE",
+   "start": 540,
+   "end": 630
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "JASON LINDNER (LIVE KEYBOARD SOUND)",
+   "start": 720,
+   "end": 780
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "ADI",
+   "start": 780,
+   "end": 900
+  },
+  {
+   "stage": "THE ORCHARD",
+   "artist": "STUDIO BATSUMI",
+   "start": 900,
+   "end": 1080
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "ALEX DOWNEY",
+   "start": 120,
+   "end": 180
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "TALK: CHEZ DAMIER IN CONVERSATION WITH ROB",
+   "start": 180,
+   "end": 240
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "TALK: DIGGING DEEP: TREVINOS X INVERTED AUDIO WITH SONJA MOONEAR, DR",
+   "start": 240,
+   "end": 300
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "DOMINIC CAPELLO",
+   "start": 300,
+   "end": 360
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "TALK: THE SOUND OF PSYCHEDELICS WITH DAVID LUKE & FREESIA",
+   "start": 360,
+   "end": 420
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "CHEZ DE MILO",
+   "start": 420,
+   "end": 480
+  },
+  {
+   "stage": "THE ARMADILLO",
+   "artist": "FACTA & K LONE",
+   "start": 480,
+   "end": 660
+  }
+ ]
+}
