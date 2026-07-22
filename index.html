@@ -810,9 +810,9 @@ function b64d(s){ return decodeURIComponent(escape(atob(s.replace(/-/g,'+').repl
 document.getElementById('shareBtn').onclick=()=>{ if(FIREBASE_CONFIG){ openPartySheet(); } else { openShareSheet(); } };
 function openShareSheet(){
   const sheet=document.getElementById('sheet');
-  sheet.className='open';
+  sheet.className='open center';
   if(!S.people.length){
-    sheet.innerHTML=`<div class="sheetIn"><h2>Share picks</h2>
+    sheet.innerHTML=`<div class="sheetIn modal wide"><h2>Share picks</h2>
       <div class="shint">Nothing to share yet — add a person and pick some sets first.</div>
       <div class="srow"><button class="sbtn" id="shClose">Close</button></div></div>`;
     sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
@@ -820,7 +820,7 @@ function openShareSheet(){
     return;
   }
   const me=person(S.active);
-  sheet.innerHTML=`<div class="sheetIn">
+  sheet.innerHTML=`<div class="sheetIn modal wide">
     <h2>Share picks</h2>
     <div class="shint">Send a link. When someone opens it, your picks appear on their planner (and theirs can come back to you the same way). Everything else works offline — no accounts, no server.</div>
     <div class="srow"><button class="sbtn solid" id="shMine">Copy link — ${esc(me.name)}'s picks (${picksOf(S.active).length})</button></div>
