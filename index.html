@@ -12,7 +12,7 @@
   --paper:#FFFFFF; --ink:#0A0A0A; --faded:#9E9E9E; --paper2:#F5F5F5;
   --green:#4CAF50; --red:#F44336; --hour:48px; --gutter:44px; --colw:132px;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 html,body{height:100%}
 body{
   background:var(--paper); color:var(--ink);
@@ -42,7 +42,7 @@ header{border-bottom:2px solid var(--ink);background:var(--paper);position:relat
 .vtab{width:64px;padding:8px 0 7px;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;border-right:1.5px solid var(--ink)}
 .vtab:last-child{border-right:none}
 .vtab.on{background:var(--ink);color:var(--paper)}
-main{position:fixed;inset-block-start:var(--headh,148px) 0;inset-inline:0;bottom:0;overflow:hidden}
+main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
 /* ---------- GRID ---------- */
 #gridWrap{height:100%;overflow:auto}
 .grid{position:relative;width:max-content;min-width:100%}
@@ -101,7 +101,7 @@ main{position:fixed;inset-block-start:var(--headh,148px) 0;inset-inline:0;bottom
 .sbtn{border:1.5px solid var(--ink);padding:8px 14px;font-size:13px;text-transform:uppercase;letter-spacing:.1em;background:var(--paper)}
 .sbtn.solid{background:var(--ink);color:var(--paper)}
 .sbtn.danger{border-color:var(--red);color:var(--red)}
-.sin{border:1.5px solid var(--ink);background:var(--paper);padding:8px 10px;font:inherit;font-size:14px;color:var(--ink);flex:1;min-width:120px;text-transform:uppercase}
+.sin{border:1.5px solid var(--ink);background:var(--paper);padding:8px 10px;font:inherit;font-size:16px;color:var(--ink);flex:1;min-width:120px;text-transform:uppercase}
 .sin:focus{outline:2px solid var(--ink)}
 .shint{font-size:12px;line-height:1.5;opacity:.8;margin:6px 0 14px}
 #banner{position:fixed;left:10px;right:10px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:60;display:none}
@@ -111,6 +111,20 @@ main{position:fixed;inset-block-start:var(--headh,148px) 0;inset-inline:0;bottom
 .bIn button{border:1.5px solid var(--paper);padding:5px 12px;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
 .bIn button.pri{background:var(--paper);color:var(--ink)}
 @media(min-width:700px){:root{--colw:150px}.masthead h1{font-size:24px}}
+@media(max-width:480px){
+  :root{--colw:112px;--gutter:38px;--hour:44px}
+  .masthead{padding:8px 10px 2px}
+  .masthead h1{font-size:16px}
+  .masthead .sub{font-size:10px;letter-spacing:.2em}
+  .masthead .share{font-size:11px;padding:2px 8px}
+  .people{padding:5px 10px 7px}
+  .pchip{font-size:12px;padding:3px 8px}
+  .dtab{font-size:12px;padding:7px 0 6px;letter-spacing:.08em}
+  .vtab{width:52px;font-size:10px}
+  .shead{font-size:9.5px;letter-spacing:.05em;padding:5px 2px;min-height:30px}
+  .act .nm{font-size:11px}
+  .dayTitle{font-size:20px}
+}
 </style>
 </head>
 <body>
