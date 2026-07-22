@@ -604,6 +604,16 @@ function openPersonSheet(p,onDone){
   const cancel=document.createElement('button'); cancel.className='sbtn'; cancel.textContent='Cancel';
   cancel.onclick=closeSheet;
   r2.appendChild(cancel);
+  if(p&&FIREBASE_CONFIG&&S.room&&isOrganizer()&&p.pin){
+    const rst=document.createElement('button'); rst.className='sbtn';
+    rst.textContent='Reset passcode';
+    rst.onclick=()=>{
+      p.pin=null;
+      claimed.delete(p.id); S.claims=[...claimed];
+      save(); closeSheet(); renderAll();
+    };
+    r2.appendChild(rst);
+  }
   if(p){
     const del=document.createElement('button'); del.className='sbtn danger';
     del.textContent='Remove';
