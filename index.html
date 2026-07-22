@@ -174,9 +174,16 @@ const DAYS = ['thu','fri','sat','sun'];
 const DAYNAMES = {thu:'Thursday',fri:'Friday',sat:'Saturday',sun:'Sunday'};
 const STAGE_ORDER = ['DERREN SMART STAGE','PINTERS','THE WAREHOUSE','THE QUARRY','THE PAVILION','EARTHLING','OUTBURST','TERMINUS','STALLIONS','THE OLD GRAMOPHONE','GIANT STEPS','SCULPTURE GARDEN','THE ORCHARD','THE ARMADILLO'];
 const TERMINUS_DAYS = ['fri','sat','sun'];
-const COLORS = ['#3498DB','#2ECC71','#E74C3C','#9B59B6','#F1C40F','#E67E22','#1ABC9C','#34495E','#C0392B','#2980B9','#27AE60','#D35400'];
-const COLORS_EXTRA = ['#16A085','#8E44AD','#2C3E50','#F39C12','#95A5A6','#7F8C8D'];
-const ALLCOLORS = COLORS.concat(COLORS_EXTRA);
+const PALETTES = {
+  flat:     ['#3498DB','#2ECC71','#E74C3C','#9B59B6','#F1C40F','#E67E22','#1ABC9C','#34495E','#C0392B','#2980B9','#27AE60','#D35400','#16A085','#8E44AD','#2C3E50','#F39C12','#95A5A6','#7F8C8D'],
+  material: ['#F44336','#E91E63','#9C27B0','#673AB7','#3F51B5','#2196F3','#03A9F4','#00BCD4','#009688','#4CAF50','#8BC34A','#CDDC39','#FFC107','#FF9800','#FF5722','#795548','#607D8B','#FFEB3B'],
+  tailwind: ['#EF4444','#F97316','#F59E0B','#EAB308','#84CC16','#22C55E','#10B981','#14B8A6','#06B6D4','#0EA5E9','#3B82F6','#6366F1','#8B5CF6','#A855F7','#D946EF','#EC4899','#F43F5E','#64748B'],
+  retro:    ['#E63946','#F4A261','#E9C46A','#2A9D8F','#264653','#EF476F','#FFD166','#06D6A0','#118AB2','#073B4C','#F72585','#7209B7'],
+  neon:     ['#FF006E','#FB5607','#FFBE0B','#8338EC','#3A86FF','#06D6A0','#FF4D6D','#C9184A','#7B2CBF','#00B4D8','#38B000','#FF8500'],
+};
+const LIBNAMES = {flat:'Flat UI',material:'Material',tailwind:'Tailwind',retro:'Retro',neon:'Neon'};
+const COLORS = PALETTES.flat;
+const ALLCOLORS = [...new Set(Object.values(PALETTES).flat())];
 function lumc(hex){const v=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4));return .2126*v[0]+.7152*v[1]+.0722*v[2];}
 function textOn(hex){const L=lumc(hex);return (1.05/(L+.05))>=((L+.05)/.05)?'#FFFFFF':'#0A0A0A';}
 function isLight(hex){ return textOn(hex)==='#0A0A0A'; }
@@ -444,9 +451,8 @@ function openPersonSheet(p){
   const sheet=document.getElementById('sheet');
   sheet.className='open center'; sheet.innerHTML='';
   const taken=takenColors(p&&p.id);
-  const baseAllTaken=COLORS.every(c=>taken.includes(c));
-  const palette=(baseAllTaken||(p&&COLORS_EXTRA.includes(p.color)))?ALLCOLORS:COLORS;
-  let sel=p?p.color:(palette.find(c=>!taken.includes(c))||palette[0]);
+  let lib=p?(Object.keys(PALETTES).find(k=>PALETTES[k].includes(p.color))||'flat'):'flat';
+  let sel=p?p.color:(PALETTES[lib].find(c=>!taken.includes(c))||PALETTES[lib][0]);
 
   const inWrap=document.createElement('div'); inWrap.className='sheetIn modal';
   inWrap.innerHTML=`<h2>${p?'Edit '+esc(p.name):'Join the party'}</h2>`
@@ -458,10 +464,25 @@ function openPersonSheet(p){
   row.appendChild(input);
   inWrap.appendChild(row);
 
+  const libRow=document.createElement('div'); libRow.className='filterRow';
   const swBox=document.createElement('div'); swBox.className='swatches';
+  function paintLibs(){
+    libRow.innerHTML='';
+    Object.keys(PALETTES).forEach(k=>{
+      const b=document.createElement('button');
+      b.className='fchip'+(k===lib?' on':'');
+      b.textContent=LIBNAMES[k];
+      b.onclick=()=>{
+        lib=k;
+        if(!PALETTES[lib].includes(sel)) sel=PALETTES[lib].find(c=>!taken.includes(c))||sel;
+        paintLibs(); paintSwatches();
+      };
+      libRow.appendChild(b);
+    });
+  }
   function paintSwatches(){
     swBox.innerHTML='';
-    palette.forEach(c=>{
+    PALETTES[lib].forEach(c=>{
       const isTaken=taken.includes(c);
       const b=document.createElement('button');
       b.className='sw'+(c===sel?' sel':'')+(isTaken?' taken':'');
@@ -472,7 +493,8 @@ function openPersonSheet(p){
       swBox.appendChild(b);
     });
   }
-  paintSwatches();
+  paintLibs(); paintSwatches();
+  inWrap.appendChild(libRow);
   inWrap.appendChild(swBox);
 
   const r2=document.createElement('div'); r2.className='srow'; r2.style.marginTop='14px';
