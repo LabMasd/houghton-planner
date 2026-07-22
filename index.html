@@ -10,7 +10,7 @@
 <style>
 :root{
   --paper:#FFFFFF; --ink:#0A0A0A; --faded:#9E9E9E; --paper2:#F5F5F5;
-  --green:#4CAF50; --red:#F44336; --hour:48px; --gutter:44px; --colw:132px;
+  --green:#2E7D32; --red:#D32F2F; --hour:48px; --gutter:44px; --colw:132px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 html,body{height:100%}
@@ -172,7 +172,7 @@ const DAYS = ['thu','fri','sat','sun'];
 const DAYNAMES = {thu:'Thursday',fri:'Friday',sat:'Saturday',sun:'Sunday'};
 const STAGE_ORDER = ['DERREN SMART STAGE','PINTERS','THE WAREHOUSE','THE QUARRY','THE PAVILION','EARTHLING','OUTBURST','TERMINUS','STALLIONS','THE OLD GRAMOPHONE','GIANT STEPS','SCULPTURE GARDEN','THE ORCHARD','THE ARMADILLO'];
 const TERMINUS_DAYS = ['fri','sat','sun'];
-const COLORS = ['#2196F3','#4CAF50','#FF9800','#9C27B0','#E91E63','#009688','#3F51B5','#FF5722','#795548','#00BCD4'];
+const COLORS = ['#1976D2','#2E7D32','#D84315','#7B1FA2','#C2185B','#00796B','#303F9F','#D32F2F','#6D4C41','#455A64'];
 const HOUR = 48, DAY_MIN = 23*60;
 
 // act id = day~stage~start
@@ -272,7 +272,7 @@ function renderGrid(){
       if(who.length===1){ el.style.background=who[0].color; }
       else if(who.length>1){
         const n=who.length;
-        el.style.background=`linear-gradient(90deg,${who.map((p,i)=>`${p.color} ${i*100/n}%,${p.color} ${(i+1)*100/n}%`).join(',')})`;
+        el.style.background=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.22)),linear-gradient(90deg,${who.map((p,i)=>`${p.color} ${i*100/n}%,${p.color} ${(i+1)*100/n}%`).join(',')})`;
       }
       el.style.top=(a.start/60*HOUR)+'px';
       el.style.height=Math.max(durPx-2,16)+'px';
