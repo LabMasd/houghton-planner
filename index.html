@@ -20,7 +20,7 @@ body{
   overscroll-behavior-y:none;
 }
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
-header{border-bottom:2px solid var(--ink);background:var(--paper);position:relative;z-index:20}
+header{border-bottom:2px solid var(--ink);background:var(--paper);position:relative;z-index:20;padding-top:env(safe-area-inset-top)}
 .masthead{display:flex;align-items:baseline;gap:8px;padding:10px 12px 4px}
 .masthead h1{font-weight:800;font-size:20px;letter-spacing:-.01em;text-transform:uppercase}
 .masthead .sub{font-size:12px;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
@@ -29,11 +29,11 @@ header{border-bottom:2px solid var(--ink);background:var(--paper);position:relat
 .masthead #searchBtn{margin-left:auto}
 .people{display:flex;gap:6px;padding:6px 12px 8px;overflow-x:auto;scrollbar-width:none}
 .people::-webkit-scrollbar{display:none}
-.pchip{display:flex;align-items:center;gap:6px;border:1.5px solid var(--ink);padding:4px 10px;font-size:13px;
-  text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;flex:0 0 auto}
-.pchip .pd{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
-.pchip.on{background:var(--ink);color:var(--paper)}
-.pchip.add{border-style:dashed;opacity:.85}
+.pchip{display:flex;align-items:center;gap:6px;border:2px solid var(--pc,var(--ink));color:var(--pc,var(--ink));
+  padding:4px 10px;font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;flex:0 0 auto;background:var(--paper)}
+.pchip.on{background:var(--pc,var(--ink));color:#fff}
+.pchip.add{border:1.5px dashed #9E9E9E;color:#616161;font-weight:400}
 .tabs{display:flex;align-items:stretch;border-top:1.5px solid var(--ink)}
 .days{display:flex;flex:1}
 .dtab{flex:1;padding:8px 0 7px;text-align:center;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
@@ -45,7 +45,8 @@ header{border-bottom:2px solid var(--ink);background:var(--paper);position:relat
 .vtab.on{background:var(--ink);color:var(--paper)}
 main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
 /* ---------- GRID ---------- */
-#gridWrap{height:100%;overflow:auto}
+#gridWrap{height:100%;overflow:auto;scroll-snap-type:x proximity;scroll-padding-left:calc(var(--gutter) + 4px)}
+#gridWrap .col{scroll-snap-align:start}
 .grid{position:relative;width:max-content;min-width:100%}
 .hdrRow{display:flex;position:sticky;top:0;z-index:10;background:var(--paper);border-bottom:1.5px solid var(--ink)}
 .corner{position:sticky;left:0;z-index:11;width:var(--gutter);flex:0 0 var(--gutter);background:var(--paper);border-right:1.5px solid var(--ink)}
@@ -67,8 +68,14 @@ main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--cl,4);overflow:hidden}
 .act .tm{font-size:9.5px;opacity:.75;margin-top:1px}
 .act.g2{background:#DEDEDE;border-color:#ABABAB}
-.act.others{background:var(--paper);border:2px solid var(--ink);color:var(--ink);z-index:1}
+.act.picked{color:#fff;border-color:var(--ink);z-index:1;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.act.picked .tm{opacity:.95}
 .act.flash{animation:aflash 1.8s ease-out}
+.pbig{display:flex;align-items:center;gap:10px;width:100%;border:2px solid var(--pc);color:var(--pc);
+  padding:12px;margin-bottom:8px;font-size:15px;font-weight:700;text-transform:uppercase;background:var(--paper)}
+.pbig.going{background:var(--pc);color:#fff}
+.pbig .pd{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.pbig .st2{margin-left:auto;font-size:11px;font-weight:400;letter-spacing:.1em}
 @keyframes aflash{0%{box-shadow:0 0 0 5px #2196F3}70%{box-shadow:0 0 0 5px #2196F3}100%{box-shadow:0 0 0 0 rgba(33,150,243,0)}}
 .sr{display:flex;gap:10px;border:1px solid #BDBDBD;padding:8px 10px;margin-bottom:6px;align-items:center;cursor:pointer;background:var(--paper)}
 .sr .d{flex:0 0 78px;font-size:11px;font-weight:700;text-transform:uppercase;line-height:1.3}
@@ -76,13 +83,12 @@ main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
 .sr .a{flex:1;min-width:0;font-size:14px;font-weight:600;text-transform:uppercase;line-height:1.15}
 .sr .a small{display:block;font-size:10.5px;font-weight:400;letter-spacing:.08em;opacity:.7;margin-top:1px}
 .sr .go{flex:0 0 auto;border:1.5px solid currentColor;padding:4px 9px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:none;color:inherit}
-.sr.picked{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.sr.picked{background:var(--pc,var(--ink));color:#fff;border-color:var(--pc,var(--ink))}
 .snores{font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;padding:14px 2px}
 .act.sm{padding:1px 2px 7px}
 .act.sm .nm{font-size:10px}
 .act.sm .tm{display:none}
 .act.note{border-style:dashed;color:var(--faded);border-color:var(--faded);pointer-events:none;padding-bottom:2px}
-.act.mine{background:var(--ink);color:var(--paper);border-color:var(--ink);z-index:2}
 .act .dots{position:absolute;bottom:2px;left:0;right:0;display:flex;gap:3px;justify-content:center}
 .act .dot{width:7px;height:7px;border-radius:50%;border:1px solid var(--paper);box-shadow:0 0 0 .5px var(--ink)}
 /* ---------- PLAN ---------- */
@@ -179,10 +185,12 @@ DAYS.forEach(d => DATA[d].forEach(a => { ACTS[aid(d,a)] = {day:d, ...a}; }));
 const KEY='htn26-v1';
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e){ S = null; }
-if (!S || !S.people || !S.people.length) {
-  S = { people:[{id:'p1',name:'ME',color:COLORS[0]}], picks:{p1:[]}, active:'p1', day:'thu', view:'grid' };
+if (!S || !S.people) {
+  S = { people:[], picks:{}, active:null, day:'thu', view:'grid', planDay:'all' };
 }
 if(!S.planDay) S.planDay='all';
+if(S.active && !S.people.find(p=>p.id===S.active)) S.active=null;
+if(!S.active && S.people.length) S.active=S.people[0].id;
 S.people.forEach((p,i)=>{ if(!COLORS.includes(p.color)) p.color=COLORS[i%COLORS.length]; });
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function person(id){ return S.people.find(p=>p.id===id); }
@@ -195,12 +203,13 @@ function renderPeople(){
   S.people.forEach(p=>{
     const b=document.createElement('button');
     b.className='pchip'+(p.id===S.active?' on':'');
-    b.innerHTML=`<span class="pd" style="background:${p.color}"></span>${esc(p.name)}`;
+    b.style.setProperty('--pc',p.color);
+    b.textContent=p.name;
     b.onclick=()=>{ if(S.active===p.id){ openPersonSheet(p); } else { S.active=p.id; save(); renderAll(); } };
     row.appendChild(b);
   });
   const add=document.createElement('button');
-  add.className='pchip add'; add.textContent='+ friend';
+  add.className='pchip add'; add.textContent='+ add person';
   add.onclick=()=>openPersonSheet(null);
   row.appendChild(add);
 }
@@ -223,10 +232,12 @@ document.getElementById('vPlan').onclick=()=>{S.view='plan';save();renderAll();}
 
 // ---------- grid ----------
 function renderGrid(){
+  const prev=document.getElementById('gridWrap');
+  const keep=prev?{t:prev.scrollTop,l:prev.scrollLeft,d:prev.dataset.day}:null;
   const day=S.day;
   const acts=DATA[day];
   const stages=STAGE_ORDER.filter(s=>acts.some(a=>a.stage===s) || (s==='TERMINUS'&&TERMINUS_DAYS.includes(day)));
-  const wrap=document.createElement('div'); wrap.id='gridWrap';
+  const wrap=document.createElement('div'); wrap.id='gridWrap'; wrap.dataset.day=day;
   const g=document.createElement('div'); g.className='grid';
   // header
   const hr=document.createElement('div'); hr.className='hdrRow';
@@ -255,10 +266,14 @@ function renderGrid(){
       const id=aid(day,a);
       const el=document.createElement('button');
       const durPx=(a.end-a.start)/60*HOUR;
-      const mine=picksOf(S.active).includes(id);
-      const others=!mine&&S.people.some(p=>picksOf(p.id).includes(id));
-      el.className='act'+(durPx<34?' sm':'')+(ai%2?' g2':'')+(mine?' mine':'')+(others?' others':'');
+      const who=S.people.filter(p=>picksOf(p.id).includes(id));
+      el.className='act'+(durPx<34?' sm':'')+(ai%2?' g2':'')+(who.length?' picked':'');
       el.dataset.aid=id;
+      if(who.length===1){ el.style.background=who[0].color; }
+      else if(who.length>1){
+        const n=who.length;
+        el.style.background=`linear-gradient(90deg,${who.map((p,i)=>`${p.color} ${i*100/n}%,${p.color} ${(i+1)*100/n}%`).join(',')})`;
+      }
       el.style.top=(a.start/60*HOUR)+'px';
       el.style.height=Math.max(durPx-2,16)+'px';
       const showTm=durPx>=56;
@@ -266,11 +281,7 @@ function renderGrid(){
       el.style.setProperty('--cl',lines);
       el.title=`${a.artist} — ${fmt(a.start)}–${fmt(a.end)} — ${titleStage(a.stage)}`;
       el.innerHTML=`<div class="nm">${esc(a.artist)}</div>`+(showTm?`<div class="tm">${fmt(a.start)}–${fmt(a.end)}</div>`:'');
-      const dots=S.people.filter(p=>picksOf(p.id).includes(id));
-      if(dots.length){
-        el.innerHTML+=`<div class="dots">${dots.map(p=>`<span class="dot" style="background:${p.color}"></span>`).join('')}</div>`;
-      }
-      el.onclick=()=>togglePick(id);
+      el.onclick=()=>openActSheet(id);
       col.appendChild(el);
     });
     br.appendChild(col);
@@ -283,16 +294,56 @@ function renderGrid(){
   wrap.appendChild(g);
   const main=document.getElementById('main');
   main.innerHTML=''; main.appendChild(wrap);
-  // scroll to first pick or festival start of action
-  const first=Math.min(...acts.map(a=>a.start));
-  wrap.scrollTop=Math.max(0,(isFinite(first)?first:0)/60*HOUR-20);
+  if(keep&&keep.d===day){
+    wrap.scrollTop=keep.t; wrap.scrollLeft=keep.l;
+  }else{
+    const first=Math.min(...acts.map(a=>a.start));
+    wrap.scrollTop=Math.max(0,(isFinite(first)?first:0)/60*HOUR-20);
+  }
 }
 function titleStage(s){ return s.replace('DERREN SMART STAGE','DERREN SMART'); }
 function togglePick(id){
+  if(!S.active){ openPersonSheet(null); return; }
   const arr=S.picks[S.active]||(S.picks[S.active]=[]);
   const i=arr.indexOf(id);
   if(i>=0) arr.splice(i,1); else arr.push(id);
   save(); renderAll();
+}
+function openActSheet(id){
+  const a=ACTS[id];
+  const sheet=document.getElementById('sheet');
+  sheet.className='open';
+  let body;
+  if(!S.people.length){
+    body=`<div class="shint">Add a person first, then tap sets to mark who's going.</div>
+      <div class="srow"><button class="sbtn solid" id="asAdd">Add a person</button></div>`;
+  }else{
+    body=S.people.map(p=>{
+      const going=picksOf(p.id).includes(id);
+      return `<button class="pbig${going?' going':''}" data-p="${p.id}" style="--pc:${p.color}">
+        <span class="pd" style="background:${going?'#fff':p.color}"></span>${esc(p.name)}
+        <span class="st2">${going?'Going ✓':'Not going'}</span></button>`;
+    }).join('');
+  }
+  sheet.innerHTML=`<div class="sheetIn">
+    <h2>${esc(a.artist)}</h2>
+    <div class="shint">${DAYNAMES[a.day]} · ${fmt(a.start)}–${fmt(a.end)} · ${esc(titleStage(a.stage))}</div>
+    ${body}
+    <div class="srow" style="margin-top:8px"><button class="sbtn" id="asClose">Done</button></div>
+  </div>`;
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  document.getElementById('asClose').onclick=closeSheet;
+  const addB=document.getElementById('asAdd');
+  if(addB) addB.onclick=()=>openPersonSheet(null);
+  sheet.querySelectorAll('.pbig').forEach(b=>{
+    b.onclick=()=>{
+      const pid=b.dataset.p;
+      const arr=S.picks[pid]||(S.picks[pid]=[]);
+      const i=arr.indexOf(id);
+      if(i>=0) arr.splice(i,1); else arr.push(id);
+      save(); renderAll(); openActSheet(id);
+    };
+  });
 }
 
 // ---------- plan ----------
@@ -373,7 +424,7 @@ function openPersonSheet(p){
   const sheet=document.getElementById('sheet');
   sheet.className='open'; sheet.innerHTML='';
   const inWrap=document.createElement('div'); inWrap.className='sheetIn';
-  inWrap.innerHTML=`<h2>${p?'Edit '+esc(p.name):'Add a friend'}</h2>`;
+  inWrap.innerHTML=`<h2>${p?'Edit '+esc(p.name):'Add a person'}</h2>`;
   const row=document.createElement('div'); row.className='srow';
   const input=document.createElement('input');
   input.className='sin'; input.placeholder='Name (e.g. Kate)'; input.maxLength=14;
@@ -393,12 +444,12 @@ function openPersonSheet(p){
   };
   row.appendChild(ok);
   inWrap.appendChild(row);
-  if(p&&S.people.length>1){
+  if(p){
     const del=document.createElement('button'); del.className='sbtn danger';
     del.textContent='Remove '+p.name;
     del.onclick=()=>{
       S.people=S.people.filter(x=>x.id!==p.id); delete S.picks[p.id];
-      if(S.active===p.id) S.active=S.people[0].id;
+      if(S.active===p.id) S.active=S.people.length?S.people[0].id:null;
       save(); closeSheet(); renderAll();
     };
     const r2=document.createElement('div'); r2.className='srow'; r2.appendChild(del);
@@ -420,6 +471,14 @@ function b64d(s){ return decodeURIComponent(escape(atob(s.replace(/-/g,'+').repl
 document.getElementById('shareBtn').onclick=()=>{
   const sheet=document.getElementById('sheet');
   sheet.className='open';
+  if(!S.people.length){
+    sheet.innerHTML=`<div class="sheetIn"><h2>Share picks</h2>
+      <div class="shint">Nothing to share yet — add a person and pick some sets first.</div>
+      <div class="srow"><button class="sbtn" id="shClose">Close</button></div></div>`;
+    sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+    document.getElementById('shClose').onclick=closeSheet;
+    return;
+  }
   const me=person(S.active);
   sheet.innerHTML=`<div class="sheetIn">
     <h2>Share picks</h2>
@@ -482,6 +541,8 @@ function renderResults(q){
     const row=document.createElement('div');
     const picked=picksOf(S.active).includes(id);
     row.className='sr'+(picked?' picked':'');
+    const ap=person(S.active);
+    if(picked&&ap) row.style.setProperty('--pc',ap.color);
     row.innerHTML=`
       <div class="d">${DAYNAMES[a.day].slice(0,3)}<small>${fmt(a.start)}–${fmt(a.end)}</small></div>
       <div class="a">${esc(a.artist)}<small>${esc(titleStage(a.stage))}</small></div>
@@ -549,6 +610,7 @@ function renderAll(){
 window.addEventListener('resize',()=>{ document.getElementById('main').style.top=document.getElementById('hdr').offsetHeight+'px'; });
 renderAll();
 checkImport();
+if(!S.people.length && !document.getElementById('banner').classList.contains('show')) openPersonSheet(null);
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
