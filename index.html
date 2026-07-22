@@ -221,6 +221,7 @@ S.people.forEach(p=>{
 });
 function save(skipPush){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} if(!skipPush) partyQueue(); }
 function person(id){ return S.people.find(p=>p.id===id); }
+function pname(p){ return (S.roomOrgP&&p.id===S.roomOrgP?'* ':'')+p.name; }
 function picksOf(id){ return (S.picks[id]||[]).filter(x=>ACTS[x]); }
 
 // ---------- header ----------
@@ -241,7 +242,7 @@ function renderPeople(){
     b.className='pchip'+(p.id===S.active?' on':'');
     b.style.setProperty('--pc',p.color);
     b.style.setProperty('--pt',textOn(p.color));
-    b.textContent=p.name;
+    b.textContent=pname(p);
     b.onclick=()=>{ S.active=p.id; save(); renderAll(); openPersonView(p); };
     row.appendChild(b);
   });
@@ -358,7 +359,7 @@ function openActSheet(id){
       const going=picksOf(p.id).includes(id);
       const tp=textOn(p.color);
       return `<button class="pbig${going?' going':''}" data-p="${p.id}" style="--pc:${p.color};--pt:${tp}">
-        <span class="pd" style="background:${going?tp:p.color}"></span>${esc(p.name)}
+        <span class="pd" style="background:${going?tp:p.color}"></span>${esc(pname(p))}
         <span class="st2">${going?'Going ✓':'Not going'}</span></button>`;
     }).join('');
   }
@@ -569,7 +570,10 @@ function openPersonSheet(p,onDone){
       const id='p'+Date.now();
       S.people.push({id,name:nm,color:sel});
       S.picks[id]=[]; S.active=id;
-      if(FIREBASE_CONFIG&&S.room){ claimed.add(id); S.claims=[...claimed]; }
+      if(FIREBASE_CONFIG&&S.room){
+        claimed.add(id); S.claims=[...claimed];
+        if(isOrganizer()&&!S.roomOrgP){ S.roomOrgP=id; FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room),{orgP:id}); }
+      }
       save(); closeSheet(); renderAll();
       if(onDone){ onDone(); }
       else if(FIREBASE_CONFIG&&S.room) openClaimSheet(id);
@@ -615,7 +619,7 @@ function openPersonView(p){
   });
   if(!body) body='<div class="shint">No picks yet — tap sets in the grid or use Search.</div>';
   sheet.innerHTML=`<div class="sheetIn">
-    <h2><span class="pd" style="background:${p.color};width:12px;height:12px;margin-right:6px"></span>${esc(p.name)}</h2>
+    <h2><span class="pd" style="background:${p.color};width:12px;height:12px;margin-right:6px"></span>${esc(pname(p))}</h2>
     ${body}
     <div class="srow" style="margin-top:10px">
       ${(FIREBASE_CONFIG&&S.room&&!canEdit(p.id))?'<button class="sbtn solid" id="pvClaim">This is me — claim</button>':''}
@@ -673,7 +677,7 @@ function subscribeRoom(id){
     const v=snap.val();
     if(!v){ leaveParty(); return; }
     applyingRemote=true;
-    S.room=id; S.roomName=v.name||'Party'; S.roomOrg=v.org; S.roomLib=PALETTES[v.lib]?v.lib:'flat';
+    S.room=id; S.roomName=v.name||'Party'; S.roomOrg=v.org; S.roomLib=PALETTES[v.lib]?v.lib:'flat'; S.roomOrgP=v.orgP||null;
     const ppl=v.people||{};
     S.people=Object.keys(ppl).sort((a,b)=>(ppl[a].ts||0)-(ppl[b].ts||0))
       .map(k=>({id:k,name:ppl[k].name,color:ppl[k].color,pin:ppl[k].pin||null}));
@@ -683,6 +687,10 @@ function subscribeRoom(id){
     if(S.active&&!S.people.find(p=>p.id===S.active)) S.active=S.people.length?S.people[0].id:null;
     save(true); renderAll();
     applyingRemote=false;
+    if(isOrganizer()&&!S.roomOrgP){
+      const mine=S.people.find(p=>claimed.has(p.id));
+      if(mine){ S.roomOrgP=mine.id; FB.m.update(FB.m.ref(FB.db,'rooms/'+S.room),{orgP:mine.id}); }
+    }
     if(pendingWho){
       pendingWho=false;
       if(!S.people.some(p=>claimed.has(p.id))) openWhoSheet();
@@ -719,12 +727,12 @@ async function createParty(name,lib){
     picks[p.id]=picksOf(p.id); claimed.add(p.id);
   });
   S.claims=[...claimed];
-  await FB.m.set(FB.m.ref(FB.db,'rooms/'+id),{name:name||'Houghton party',org:myUid,lib,created:{'.sv':'timestamp'},people,picks});
-  S.room=id; S.roomLib=lib; save(true); subscribeRoom(id);
+  await FB.m.set(FB.m.ref(FB.db,'rooms/'+id),{name:name||'Houghton party',org:myUid,orgP:S.active||null,lib,created:{'.sv':'timestamp'},people,picks});
+  S.room=id; S.roomLib=lib; S.roomOrgP=S.active||null; save(true); subscribeRoom(id);
 }
 function leaveParty(){
   if(roomUnsub){ roomUnsub(); roomUnsub=null; }
-  S.room=null; S.roomOrg=null; S.roomName=null; S.roomLib=null;
+  S.room=null; S.roomOrg=null; S.roomName=null; S.roomLib=null; S.roomOrgP=null;
   save(true); renderAll();
 }
 function partyLink(){ return location.origin+location.pathname+'#r='+S.room; }
@@ -757,7 +765,7 @@ function openWhoSheet(){
   const rows=S.people.map(p=>{
     const mine=claimed.has(p.id);
     return `<button class="pbig" data-p="${p.id}" style="--pc:${p.color};--pt:${textOn(p.color)}"${mine?' disabled':''}>
-      <span class="pd" style="background:${p.color}"></span>${esc(p.name)}
+      <span class="pd" style="background:${p.color}"></span>${esc(pname(p))}
       <span class="st2">${mine?'You':(p.pin?'Enter code to claim':'Free to claim')}</span></button>`;
   }).join('');
   sheet.innerHTML=`<div class="sheetIn modal">
@@ -844,7 +852,7 @@ function openPartySheet(){
   const members=S.people.map(p=>{
     const mine=claimed.has(p.id);
     return `<div class="pvrow"><span class="pd" style="background:${p.color}"></span>
-      <span class="n">${esc(p.name)}</span>
+      <span class="n">${esc(pname(p))}</span>
       <span class="s">${mine?'YOURS':(p.pin?'CLAIMED':'UNCLAIMED')}</span></div>`;
   }).join('');
   sheet.innerHTML=`<div class="sheetIn modal wide">
