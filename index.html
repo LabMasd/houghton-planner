@@ -712,6 +712,29 @@ function leaveParty(){
   save(true); renderAll();
 }
 function partyLink(){ return location.origin+location.pathname+'#r='+S.room; }
+async function sendVia(text,url){
+  if(navigator.share){
+    try{ await navigator.share({text,url}); }catch(e){}
+    return;
+  }
+  const enc=encodeURIComponent(text+'\n'+url);
+  const sheet=document.getElementById('sheet');
+  sheet.className='open center';
+  sheet.innerHTML=`<div class="sheetIn modal">
+    <h2>Send invite</h2>
+    <div class="shint">${esc(text)}</div>
+    <div class="srow">
+      <a class="sbtn solid" style="text-decoration:none" href="https://wa.me/?text=${enc}" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="sbtn" style="text-decoration:none" href="mailto:?subject=${encodeURIComponent('Festival planner invite')}&body=${enc}">Email</a>
+      <button class="sbtn" id="svCopy">Copy</button>
+    </div>
+    <div class="srow"><button class="sbtn" id="svClose">Close</button></div>
+  </div>`;
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  document.getElementById('svClose').onclick=closeSheet;
+  document.getElementById('svCopy').onclick=ev=>copy(text+'\n'+url,ev.target);
+}
+function inviteText(){ return `Join my ${S.roomName||'festival'} planner party — party code ${S.room}. Open the link, tap Join, claim your name.`; }
 function openClaimSheet(pid,onOk){
   const p=S.people.find(x=>x.id===pid);
   if(!p) return;
@@ -793,12 +816,13 @@ function openPartySheet(){
       <div style="font-size:28px;font-weight:800;letter-spacing:.3em">${esc(S.room)}</div>
     </div>
     <div class="shint">${isOrganizer()?'You are the organizer. ':''}Friends type the code under “I have a party code”, or open your link — then claim their name, set a passcode, and everything syncs live.</div>
-    <div class="srow"><button class="sbtn solid" id="ptCopy">Copy party link</button><button class="sbtn" id="ptCopyCode">Copy code</button></div>
+    <div class="srow"><button class="sbtn solid" id="ptSend">Share invite…</button><button class="sbtn" id="ptCopy">Copy link</button><button class="sbtn" id="ptCopyCode">Copy code</button></div>
     ${members}
     <div class="srow" style="margin-top:12px"><button class="sbtn" id="ptLeave">Leave party</button><button class="sbtn" id="ptClose">Close</button></div>
   </div>`;
   sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
   document.getElementById('ptClose').onclick=closeSheet;
+  document.getElementById('ptSend').onclick=()=>sendVia(inviteText(),partyLink());
   document.getElementById('ptCopy').onclick=ev=>copy(partyLink(),ev.target);
   document.getElementById('ptCopyCode').onclick=ev=>copy(S.room,ev.target);
   document.getElementById('ptLeave').onclick=()=>{ leaveParty(); closeSheet(); };
