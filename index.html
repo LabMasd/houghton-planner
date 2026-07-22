@@ -445,8 +445,25 @@ function renderPlan(){
   main.innerHTML=''; main.appendChild(el);
 }
 
+// ---------- first-run welcome ----------
+function openWelcome(){
+  const sheet=document.getElementById('sheet');
+  sheet.className='open center';
+  sheet.innerHTML=`<div class="sheetIn modal">
+    <h2>Houghton 2026 Planner</h2>
+    <div class="shint">The full timetable, tappable. Mark the sets you want, see who's going where, and plan the weekend together — live on everyone's phone.</div>
+    <div class="srow"><button class="sbtn solid" id="wStart">Start a party</button></div>
+    <div class="shint" style="margin:2px 0 12px">You'll be the organizer — add your name, choose the party's colours, then invite the others with one link.</div>
+    <div class="srow"><button class="sbtn" id="wSolo">Just plan for myself</button></div>
+    <div class="shint" style="margin-top:12px">Got an invite link from a friend? Open that link instead — no setup needed.</div>
+  </div>`;
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  document.getElementById('wStart').onclick=()=>openPersonSheet(null,()=>openPartySheet());
+  document.getElementById('wSolo').onclick=()=>openPersonSheet(null);
+}
+
 // ---------- join / edit person (floating card) ----------
-function openPersonSheet(p){
+function openPersonSheet(p,onDone){
   const sheet=document.getElementById('sheet');
   sheet.className='open center'; sheet.innerHTML='';
   const taken=takenColors(p&&p.id);
@@ -506,14 +523,15 @@ function openPersonSheet(p){
   ok.onclick=()=>{
     const nm=input.value.trim().toUpperCase();
     if(!nm){ input.focus(); return; }
-    if(p){ p.name=nm; p.color=sel; save(); closeSheet(); renderAll(); }
+    if(p){ p.name=nm; p.color=sel; save(); closeSheet(); renderAll(); if(onDone) onDone(); }
     else{
       const id='p'+Date.now();
       S.people.push({id,name:nm,color:sel});
       S.picks[id]=[]; S.active=id;
       if(FIREBASE_CONFIG&&S.room){ claimed.add(id); S.claims=[...claimed]; }
       save(); closeSheet(); renderAll();
-      if(FIREBASE_CONFIG&&S.room) openClaimSheet(id);
+      if(onDone){ onDone(); }
+      else if(FIREBASE_CONFIG&&S.room) openClaimSheet(id);
     }
   };
   r2.appendChild(ok);
@@ -915,7 +933,7 @@ window.addEventListener('resize',()=>{ document.getElementById('main').style.top
 renderAll();
 checkImport();
 initParty();
-if(!S.people.length && !document.getElementById('banner').classList.contains('show')) openPersonSheet(null);
+if(!S.people.length && !S.room && !document.getElementById('banner').classList.contains('show')) openWelcome();
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
