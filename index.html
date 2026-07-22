@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Houghton 2026 — Planner</title>
+<meta name="theme-color" content="#F6F0DC">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<style>
+:root{
+  --paper:#F6F0DC; --ink:#7E2817; --faded:#C9906F; --paper2:#EFE7CC;
+  --green:#39603F; --hour:48px; --gutter:44px; --colw:132px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:'Avenir Next Condensed','Roboto Condensed','Arial Narrow','Helvetica Neue',system-ui,sans-serif;
+  overscroll-behavior-y:none;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+header{border-bottom:2px solid var(--ink);background:var(--paper);position:relative;z-index:20}
+.masthead{display:flex;align-items:baseline;gap:8px;padding:10px 12px 4px}
+.masthead h1{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:700;font-size:22px;letter-spacing:.01em}
+.masthead .sub{font-size:12px;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
+.masthead .share{margin-left:auto;border:1.5px solid var(--ink);padding:3px 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.masthead .share:active{background:var(--ink);color:var(--paper)}
+.people{display:flex;gap:6px;padding:6px 12px 8px;overflow-x:auto;scrollbar-width:none}
+.people::-webkit-scrollbar{display:none}
+.pchip{display:flex;align-items:center;gap:6px;border:1.5px solid var(--ink);padding:4px 10px;font-size:13px;
+  text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;flex:0 0 auto}
+.pchip .pd{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.pchip.on{background:var(--ink);color:var(--paper)}
+.pchip.add{border-style:dashed;opacity:.85}
+.tabs{display:flex;align-items:stretch;border-top:1.5px solid var(--ink)}
+.days{display:flex;flex:1}
+.dtab{flex:1;padding:8px 0 7px;text-align:center;font-family:Georgia,serif;font-style:italic;font-weight:700;
+  font-size:15px;border-right:1.5px solid var(--ink);position:relative}
+.dtab.on{background:var(--ink);color:var(--paper)}
+.dtab .cnt{position:absolute;top:3px;right:5px;font-family:inherit;font-size:9px;font-style:normal;opacity:.9}
+.vtab{width:64px;padding:8px 0 7px;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;border-right:1.5px solid var(--ink)}
+.vtab:last-child{border-right:none}
+.vtab.on{background:var(--ink);color:var(--paper)}
+main{position:fixed;inset-block-start:var(--headh,148px) 0;inset-inline:0;bottom:0;overflow:hidden}
+/* ---------- GRID ---------- */
+#gridWrap{height:100%;overflow:auto}
+.grid{position:relative;width:max-content;min-width:100%}
+.hdrRow{display:flex;position:sticky;top:0;z-index:10;background:var(--paper);border-bottom:1.5px solid var(--ink)}
+.corner{position:sticky;left:0;z-index:11;width:var(--gutter);flex:0 0 var(--gutter);background:var(--paper);border-right:1.5px solid var(--ink)}
+.shead{width:var(--colw);flex:0 0 var(--colw);padding:7px 4px;text-align:center;font-size:11.5px;letter-spacing:.1em;
+  border-right:1px solid var(--ink);text-transform:uppercase;display:flex;align-items:center;justify-content:center;min-height:38px}
+.bodyRow{display:flex}
+.gutter{position:sticky;left:0;z-index:9;width:var(--gutter);flex:0 0 var(--gutter);background:var(--paper);border-right:1.5px solid var(--ink);position:sticky}
+.gut{position:relative}
+.hlabel{position:absolute;left:0;right:4px;text-align:right;font-size:10px;letter-spacing:.05em;transform:translateY(-50%);background:var(--paper);padding:1px 2px 1px 0}
+.col{width:var(--colw);flex:0 0 var(--colw);position:relative;border-right:1px solid rgba(126,40,23,.45);
+  background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--hour) - 1px),rgba(126,40,23,.22) calc(var(--hour) - 1px),rgba(126,40,23,.22) var(--hour))}
+.act{position:absolute;left:3px;right:3px;border:1.5px solid var(--ink);background:var(--paper);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:2px 3px 8px;text-transform:uppercase;overflow:hidden;user-select:none;-webkit-user-select:none}
+.act .nm{font-size:12px;line-height:1.08;font-weight:600;letter-spacing:.02em}
+.act .tm{font-size:9.5px;opacity:.75;margin-top:1px}
+.act.sm{padding:1px 2px 7px}
+.act.sm .nm{font-size:10px}
+.act.sm .tm{display:none}
+.act.note{border-style:dashed;color:var(--faded);border-color:var(--faded);pointer-events:none;padding-bottom:2px}
+.act.mine{background:var(--ink);color:var(--paper)}
+.act .dots{position:absolute;bottom:2px;left:0;right:0;display:flex;gap:3px;justify-content:center}
+.act .dot{width:7px;height:7px;border-radius:50%;border:1px solid var(--paper);box-shadow:0 0 0 .5px var(--ink)}
+/* ---------- PLAN ---------- */
+#plan{height:100%;overflow-y:auto;padding:14px 12px 90px}
+.dayTitle{font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:26px;margin:2px 0 12px}
+.filterRow{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.fchip{border:1.5px solid var(--ink);padding:3px 10px;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.fchip.on{background:var(--ink);color:var(--paper)}
+.entry{display:flex;gap:10px;border:1.5px solid var(--ink);margin-bottom:8px;background:var(--paper)}
+.entry .when{flex:0 0 64px;border-right:1.5px solid var(--ink);padding:8px 6px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.entry .when .s{font-size:15px;font-weight:700}
+.entry .when .e{font-size:10px;opacity:.7}
+.entry .what{flex:1;padding:8px 10px 8px 2px;min-width:0}
+.entry .what .a{font-size:15px;font-weight:600;text-transform:uppercase;line-height:1.1}
+.entry .what .st{font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.75;margin-top:2px}
+.entry .who{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.wchip{display:flex;align-items:center;gap:4px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--ink);padding:1px 6px}
+.wchip .pd{width:7px;height:7px;border-radius:50%}
+.entry.clash{border-width:2.5px;border-color:#A3200B;box-shadow:3px 3px 0 #A3200B}
+.tag{display:inline-block;font-size:9.5px;letter-spacing:.14em;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.tag.cl{background:#A3200B;color:var(--paper)}
+.tag.all{background:var(--green);color:var(--paper)}
+.gapline{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin:10px 2px}
+.empty{border:1.5px dashed var(--faded);color:var(--faded);padding:26px 14px;text-align:center;font-size:14px;text-transform:uppercase;letter-spacing:.1em;line-height:1.6}
+/* ---------- SHEET / BANNER ---------- */
+#sheet{position:fixed;inset:0;z-index:50;display:none;align-items:flex-end;background:rgba(60,20,10,.35)}
+#sheet.open{display:flex}
+.sheetIn{background:var(--paper);border-top:2.5px solid var(--ink);width:100%;padding:16px 16px calc(18px + env(safe-area-inset-bottom));max-height:78dvh;overflow-y:auto}
+.sheetIn h2{font-family:Georgia,serif;font-style:italic;font-size:20px;margin-bottom:12px}
+.srow{display:flex;gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
+.sbtn{border:1.5px solid var(--ink);padding:8px 14px;font-size:13px;text-transform:uppercase;letter-spacing:.1em;background:var(--paper)}
+.sbtn.solid{background:var(--ink);color:var(--paper)}
+.sbtn.danger{border-color:#A3200B;color:#A3200B}
+.sin{border:1.5px solid var(--ink);background:var(--paper);padding:8px 10px;font:inherit;font-size:14px;color:var(--ink);flex:1;min-width:120px;text-transform:uppercase}
+.sin:focus{outline:2px solid var(--ink)}
+.shint{font-size:12px;line-height:1.5;opacity:.8;margin:6px 0 14px}
+#banner{position:fixed;left:10px;right:10px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:60;display:none}
+#banner.show{display:block}
+.bIn{background:var(--ink);color:var(--paper);padding:12px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:4px 4px 0 rgba(126,40,23,.35)}
+.bIn .msg{flex:1;font-size:13px;text-transform:uppercase;letter-spacing:.06em;min-width:150px}
+.bIn button{border:1.5px solid var(--paper);padding:5px 12px;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
+.bIn button.pri{background:var(--paper);color:var(--ink)}
+@media(min-width:700px){:root{--colw:150px}.masthead h1{font-size:26px}}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <div class="masthead">
+    <h1>Houghton 2026</h1><span class="sub">planner</span>
+    <button class="share" id="shareBtn">Share</button>
+  </div>
+  <div class="people" id="peopleRow"></div>
+  <div class="tabs">
+    <div class="days" id="dayTabs"></div>
+    <button class="vtab" data-v="grid" id="vGrid">Grid</button>
+    <button class="vtab" data-v="plan" id="vPlan">Plan</button>
+  </div>
+</header>
+<main id="main"></main>
+<div id="banner"></div>
+<div id="sheet"></div>
+
+<script>
+const DATA = {"thu":[{"stage":"DERREN SMART STAGE","artist":"HARRI PEPPER","start":480,"end":660},{"stage":"DERREN SMART STAGE","artist":"STE ROBERTS","start":660,"end":810},{"stage":"DERREN SMART STAGE","artist":"RADIOACTIVE MAN (LIVE)","start":810,"end":900},{"stage":"THE WAREHOUSE","artist":"ELECTRO ELVIS","start":480,"end":600},{"stage":"THE WAREHOUSE","artist":"ALEX DOWNEY","start":600,"end":780},{"stage":"THE WAREHOUSE","artist":"NULLPTR (LIVE)","start":780,"end":840},{"stage":"THE WAREHOUSE","artist":"BILLY NASTY","start":840,"end":960},{"stage":"THE WAREHOUSE","artist":"ACTIVE SYSTEMS","start":960,"end":1020},{"stage":"THE QUARRY","artist":"ADAM CURTAIN","start":480,"end":660},{"stage":"THE QUARRY","artist":"GABRIEL RAI","start":660,"end":840},{"stage":"THE QUARRY","artist":"CHEZ DE MILO","start":840,"end":1020},{"stage":"THE PAVILION","artist":"HARRY MCCANNA","start":480,"end":660},{"stage":"THE PAVILION","artist":"DAN ANDREI","start":660,"end":840},{"stage":"THE PAVILION","artist":"SONJA MOONEAR","start":840,"end":1020},{"stage":"EARTHLING","artist":"ADAM SHELTON","start":480,"end":660},{"stage":"EARTHLING","artist":"WAYNE HOLLAND","start":660,"end":840},{"stage":"EARTHLING","artist":"FELIX DICKINSON","start":840,"end":1020},{"stage":"OUTBURST","artist":"BAS IBELLINI","start":480,"end":660},{"stage":"OUTBURST","artist":"WILLOW","start":660,"end":840},{"stage":"OUTBURST","artist":"VERA","start":840,"end":1020},{"stage":"STALLIONS","artist":"JAKE MANDERS","start":480,"end":660},{"stage":"STALLIONS","artist":"DR HORN","start":660,"end":840},{"stage":"STALLIONS","artist":"DOC MARTIN","start":840,"end":1020},{"stage":"THE OLD GRAMOPHONE","artist":"OLI SILVA","start":480,"end":660},{"stage":"THE OLD GRAMOPHONE","artist":"OM UNIT","start":660,"end":840},{"stage":"THE OLD GRAMOPHONE","artist":"OPTIMO","start":840,"end":1020},{"stage":"GIANT STEPS","artist":"AMIT & ANEESH","start":480,"end":540},{"stage":"GIANT STEPS","artist":"DJ HIMITSU","start":540,"end":660},{"stage":"GIANT STEPS","artist":"CAMERON CULLEN","start":660,"end":780},{"stage":"GIANT STEPS","artist":"JONAS ROBINSON","start":780,"end":900},{"stage":"GIANT STEPS","artist":"JUAN BLANCO","start":900,"end":1020}],"fri":[{"stage":"DERREN SMART STAGE","artist":"HAMISH & TOBY","start":180,"end":360},{"stage":"DERREN SMART STAGE","artist":"MOXIE","start":360,"end":510},{"stage":"DERREN SMART STAGE","artist":"MIDLAND","start":510,"end":660},{"stage":"DERREN SMART STAGE","artist":"JORG KUNING (LIVE)","start":660,"end":720},{"stage":"DERREN SMART STAGE","artist":"CALL SUPER","start":720,"end":870},{"stage":"DERREN SMART STAGE","artist":"JOSH CAFFÉ (LIVE)","start":870,"end":930},{"stage":"DERREN SMART STAGE","artist":"SEDEF ADASI","start":930,"end":1080},{"stage":"PINTERS","artist":"PATRICK ROWE","start":60,"end":240},{"stage":"PINTERS","artist":"MAGUIRE (LIVE)","start":240,"end":300},{"stage":"PINTERS","artist":"JENNY JEN","start":300,"end":360},{"stage":"PINTERS","artist":"GREG PAULUS LIVE (LIVE)","start":360,"end":420},{"stage":"PINTERS","artist":"AL WOOTTON (DJ SET)","start":420,"end":480},{"stage":"PINTERS","artist":"PETER ADJAYE (LIVE)","start":480,"end":540},{"stage":"PINTERS","artist":"KIAN OK","start":540,"end":600},{"stage":"PINTERS","artist":"HOLY TONGUE (LIVE)","start":600,"end":660},{"stage":"PINTERS","artist":"KYLE TOOLE","start":660,"end":720},{"stage":"PINTERS","artist":"NÍDIA & VALENTINA (LIVE)","start":720,"end":780},{"stage":"PINTERS","artist":"OPTIMO","start":780,"end":840},{"stage":"PINTERS","artist":"AWKWARD MOMENTS (LIVE)","start":840,"end":900},{"stage":"THE WAREHOUSE","artist":"ARIO","start":180,"end":360},{"stage":"THE WAREHOUSE","artist":"AXIS 89 (LIVE)","start":360,"end":420},{"stage":"THE WAREHOUSE","artist":"CCL","start":420,"end":570},{"stage":"THE WAREHOUSE","artist":"SIMO CELL (LIVE)","start":570,"end":600},{"stage":"THE WAREHOUSE","artist":"RHYW","start":600,"end":630},{"stage":"THE WAREHOUSE","artist":"FADI MOHEM","start":630,"end":780},{"stage":"THE WAREHOUSE","artist":"RHYW","start":780,"end":900},{"stage":"THE WAREHOUSE","artist":"SEPEHR (LIVE)","start":900,"end":960},{"stage":"THE WAREHOUSE","artist":"PARIAH","start":960,"end":1080},{"stage":"THE WAREHOUSE","artist":"OBJEKT","start":1080,"end":1200},{"stage":"THE QUARRY","artist":"ANNA WALL","start":180,"end":360},{"stage":"THE QUARRY","artist":"BRUNO SCHMIDT","start":360,"end":510},{"stage":"THE QUARRY","artist":"ADI","start":510,"end":660},{"stage":"THE QUARRY","artist":"ENRICA FALQUI","start":660,"end":840},{"stage":"THE QUARRY","artist":"BOBBY.","start":840,"end":1020},{"stage":"THE QUARRY","artist":"BINH","start":1020,"end":1200},{"stage":"THE PAVILION","artist":"CRAIG RICHARDS (REGGAE SET)","start":120,"end":180},{"stage":"THE PAVILION","artist":"CHANNEL ONE","start":180,"end":300},{"stage":"THE PAVILION","artist":"LUKE UNA","start":300,"end":480},{"stage":"THE PAVILION","artist":"PEACH","start":480,"end":660},{"stage":"THE PAVILION","artist":"DRESDEN","start":660,"end":840},{"stage":"THE PAVILION","artist":"MATHEW JONSON (LIVE)","start":840,"end":930},{"stage":"THE PAVILION","artist":"CRAIG RICHARDS","start":930,"end":1110},{"stage":"THE PAVILION","artist":"REPTANT (LIVE)","start":1110,"end":1170},{"stage":"THE PAVILION","artist":"RHADOO","start":1170,"end":1380},{"stage":"EARTHLING","artist":"BAS IBELLINI","start":180,"end":300},{"stage":"EARTHLING","artist":"JONNY ROCK","start":300,"end":420},{"stage":"EARTHLING","artist":"ROB MELLO","start":420,"end":600},{"stage":"EARTHLING","artist":"REMI MAZET (LIVE)","start":600,"end":660},{"stage":"EARTHLING","artist":"H FOUNDATION (HIPP-E & HALO)","start":660,"end":840},{"stage":"EARTHLING","artist":"DOC MARTIN","start":840,"end":1020},{"stage":"EARTHLING","artist":"RARESH","start":1020,"end":1200},{"stage":"OUTBURST","artist":"KYLE TOOLE","start":180,"end":360},{"stage":"OUTBURST","artist":"AOKI TAKAMASA","start":360,"end":540},{"stage":"OUTBURST","artist":"DEADBEAT (LIVE)","start":540,"end":600},{"stage":"OUTBURST","artist":"O.BEE","start":600,"end":780},{"stage":"OUTBURST","artist":"MELCHIOR PRODUCTIONS LTD (LIVE)","start":780,"end":840},{"stage":"OUTBURST","artist":"MARGARET DYGAS","start":840,"end":1020},{"stage":"OUTBURST","artist":"XDB","start":1020,"end":1200},{"stage":"STALLIONS","artist":"JENNY JEN","start":60,"end":210},{"stage":"STALLIONS","artist":"ITCHY RICH","start":210,"end":360},{"stage":"STALLIONS","artist":"PHIL SMART","start":360,"end":540},{"stage":"STALLIONS","artist":"SHAY MALT","start":540,"end":720},{"stage":"STALLIONS","artist":"DAN BEAUMONT","start":720,"end":900},{"stage":"STALLIONS","artist":"GIDEÖN","start":900,"end":1080},{"stage":"STALLIONS","artist":"GRACE SANDS","start":1080,"end":1260},{"stage":"STALLIONS","artist":"HAMISH TOBY & XDB","start":1260,"end":1440},{"stage":"THE OLD GRAMOPHONE","artist":"JONNY ROCK","start":60,"end":180},{"stage":"THE OLD GRAMOPHONE","artist":"KEM","start":180,"end":300},{"stage":"THE OLD GRAMOPHONE","artist":"KAY SUZUKI","start":300,"end":420},{"stage":"THE OLD GRAMOPHONE","artist":"MANASSEH","start":420,"end":540},{"stage":"THE OLD GRAMOPHONE","artist":"ABA SHANTI-I","start":540,"end":720},{"stage":"THE OLD GRAMOPHONE","artist":"PRINCE FATTY, HORSEMAN, LIAM BAILEY, IGNITION HIGH POWER AND MR WILLIAMZ","start":720,"end":960},{"stage":"THE OLD GRAMOPHONE","artist":"DEADBEAT (DJ SET)","start":960,"end":1020},{"stage":"THE OLD GRAMOPHONE","artist":"OM UNIT PRESENTS ACID DUB STUDIES","start":1020,"end":1080},{"stage":"THE OLD GRAMOPHONE","artist":"SIMO CELL (DUB SET)","start":1080,"end":1140},{"stage":"THE OLD GRAMOPHONE","artist":"AL WOOTTON (LIVE)","start":1140,"end":1200},{"stage":"THE OLD GRAMOPHONE","artist":"O.BEE & TOMAS STATION","start":1380,"end":1440},{"stage":"GIANT STEPS","artist":"HARRI PEPPER","start":180,"end":300},{"stage":"GIANT STEPS","artist":"BILL BREWSTER","start":300,"end":420},{"stage":"GIANT STEPS","artist":"JOSH T & DR BANANA","start":420,"end":540},{"stage":"GIANT STEPS","artist":"DAVE HARVEY","start":540,"end":660},{"stage":"GIANT STEPS","artist":"TRISTAN DA CUNHA","start":660,"end":780},{"stage":"GIANT STEPS","artist":"KAY SUZUKI","start":780,"end":900},{"stage":"GIANT STEPS","artist":"REDA","start":900,"end":1020},{"stage":"GIANT STEPS","artist":"CLAUDE","start":1020,"end":1140},{"stage":"GIANT STEPS","artist":"FABIEN","start":1140,"end":1260},{"stage":"GIANT STEPS","artist":"SCOTT PELLOUX","start":1260,"end":1380},{"stage":"GIANT STEPS","artist":"CAMERON CULLEN","start":1380,"end":1440},{"stage":"SCULPTURE GARDEN","artist":"TOURS","start":60,"end":180},{"stage":"SCULPTURE GARDEN","artist":"TOURS","start":240,"end":660},{"stage":"SCULPTURE GARDEN","artist":"TOURS","start":1260,"end":1440},{"stage":"THE ORCHARD","artist":"TBC","start":0,"end":60},{"stage":"THE ORCHARD","artist":"MORNING FLOW WITH ANDY KOBELINSKY","start":60,"end":120},{"stage":"THE ORCHARD","artist":"ROCKET WITH ADAM REDMORE","start":120,"end":180},{"stage":"THE ORCHARD","artist":"YAMUNA BODY ROLLING WITH GEMMA NASH","start":210,"end":270},{"stage":"THE ORCHARD","artist":"THAI MASSAGE WORKSHOP WITH PAUL BRUM","start":300,"end":360},{"stage":"THE ORCHARD","artist":"SOUNDBATH","start":390,"end":450},{"stage":"THE ORCHARD","artist":"LIFE DRAWING WITH SOPHIA SHUVALOVA","start":480,"end":570},{"stage":"THE ORCHARD","artist":"VERA","start":780,"end":900},{"stage":"THE ORCHARD","artist":"DANNY DAZE ::BLUE::","start":900,"end":930},{"stage":"THE ORCHARD","artist":"CHIDA","start":930,"end":1020},{"stage":"THE ORCHARD","artist":"OCCURENCE - REGGIE WATTS & DELWIN","start":1020,"end":1080},{"stage":"THE ORCHARD","artist":"ARIO","start":1080,"end":1320},{"stage":"THE ARMADILLO","artist":"JAKE MANDERS","start":120,"end":180},{"stage":"THE ARMADILLO","artist":"TALK: REGENERATIVE DESIGN: DEZEEN IN CONVERSATION WITH CELLA","start":180,"end":240},{"stage":"THE ARMADILLO","artist":"MIDLAND (AMBIENT SET)","start":240,"end":300},{"stage":"THE ARMADILLO","artist":"TALK: RYAN GANDER IN CONVERSATION WITH CRAIG RICHARDS","start":300,"end":360},{"stage":"THE ARMADILLO","artist":"VERA","start":360,"end":420},{"stage":"THE ARMADILLO","artist":"TALK: RA 'PLAYING FAVOURITES' WITH JANE","start":420,"end":480},{"stage":"THE ARMADILLO","artist":"GABRIEL RAI","start":480,"end":540},{"stage":"THE ARMADILLO","artist":"BABY VULTURE & E/TAPE","start":540,"end":840}],"sat":[{"stage":"DERREN SMART STAGE","artist":"HARRY MCCANNA","start":180,"end":360},{"stage":"DERREN SMART STAGE","artist":"SAOIRSE","start":360,"end":540},{"stage":"DERREN SMART STAGE","artist":"SHANTI CELESTE","start":540,"end":720},{"stage":"DERREN SMART STAGE","artist":"UNDERGROUND RESISTANCE PRESENTS DEPTH","start":720,"end":810},{"stage":"DERREN SMART STAGE","artist":"CRAIG RICHARDS","start":810,"end":1020},{"stage":"DERREN SMART STAGE","artist":"DECIUS LIVE (75MINS)","start":1020,"end":1110},{"stage":"PINTERS","artist":"JOFF (TRUTH & LIES)","start":60,"end":120},{"stage":"PINTERS","artist":"ROBERT MITCHELL (LIVE SOLO PIANO)","start":120,"end":180},{"stage":"PINTERS","artist":"TRUTH & LIES (EX-FRIENDLY)","start":180,"end":240},{"stage":"PINTERS","artist":"ELIJAH MINNELLI (LIVE)","start":240,"end":300},{"stage":"PINTERS","artist":"TRUTH & LIES","start":300,"end":360},{"stage":"PINTERS","artist":"SVEN HAMMOND (LIVE)","start":360,"end":420},{"stage":"PINTERS","artist":"CRAIG RICHARDS","start":420,"end":480},{"stage":"PINTERS","artist":"REGGIE WATTS","start":480,"end":540},{"stage":"PINTERS","artist":"CARL H","start":540,"end":600},{"stage":"PINTERS","artist":"BRÌGHDE CHAIMBEUL (LIVE)","start":600,"end":660},{"stage":"PINTERS","artist":"VLADA","start":660,"end":720},{"stage":"PINTERS","artist":"SAMUEL ROHRER (LIVE)","start":720,"end":780},{"stage":"PINTERS","artist":"AMIT & ANEESH","start":780,"end":840},{"stage":"PINTERS","artist":"NIK BARTSCH'S RONIN (LIVE)","start":840,"end":900},{"stage":"THE WAREHOUSE","artist":"ALEX DOWNEY","start":180,"end":330},{"stage":"THE WAREHOUSE","artist":"STE ROBERTS (LIVE)","start":330,"end":390},{"stage":"THE WAREHOUSE","artist":"RADIOACTIVE MAN","start":390,"end":480},{"stage":"THE WAREHOUSE","artist":"HACKNEY ELECTRONICA (LIVE)","start":480,"end":570},{"stage":"THE WAREHOUSE","artist":"CRAIG RICHARDS (ELECTRO SET)","start":570,"end":630},{"stage":"THE WAREHOUSE","artist":"C.A.R (LIVE)","start":630,"end":690},{"stage":"THE WAREHOUSE","artist":"BRUNO SCHMIDT","start":690,"end":840},{"stage":"THE WAREHOUSE","artist":"Z@P","start":840,"end":990},{"stage":"THE WAREHOUSE","artist":"SLAM (LIVE)","start":990,"end":1050},{"stage":"THE WAREHOUSE","artist":"QUEST","start":1050,"end":1200},{"stage":"THE QUARRY","artist":"OLI SILVA","start":180,"end":360},{"stage":"THE QUARRY","artist":"LOLA HARO","start":360,"end":540},{"stage":"THE QUARRY","artist":"DAVE HARVEY","start":540,"end":720},{"stage":"THE QUARRY","artist":"CARL H","start":720,"end":900},{"stage":"THE QUARRY","artist":"LAKE HAZE (LIVE)","start":900,"end":960},{"stage":"THE QUARRY","artist":"UNAI TROTTI","start":960,"end":1140},{"stage":"THE QUARRY","artist":"MOY (LIVE)","start":1140,"end":1200},{"stage":"THE PAVILION","artist":"THE GHOST","start":180,"end":360},{"stage":"THE PAVILION","artist":"GENE ON EARTH","start":360,"end":540},{"stage":"THE PAVILION","artist":"DOMINIC CAPELLO","start":540,"end":720},{"stage":"THE PAVILION","artist":"MATHEW JONSON & .VRIL (LIVE)","start":720,"end":810},{"stage":"THE PAVILION","artist":"SUGAR FREE","start":810,"end":990},{"stage":"THE PAVILION","artist":"AURORA HALAL","start":990,"end":1170},{"stage":"THE PAVILION","artist":"DJ MASDA","start":1170,"end":1380},{"stage":"EARTHLING","artist":"TRISTAN DA CUNHA","start":180,"end":360},{"stage":"EARTHLING","artist":"GABRIELLE KWARTENG","start":360,"end":540},{"stage":"EARTHLING","artist":"PARAMIDA","start":540,"end":720},{"stage":"EARTHLING","artist":"FRANK HAAG (LIVE)","start":720,"end":810},{"stage":"EARTHLING","artist":"FRANCESCO DEL GARDA","start":810,"end":990},{"stage":"EARTHLING","artist":"JANE FITZ","start":990,"end":1200},{"stage":"OUTBURST","artist":"MELINA SERSER","start":180,"end":420},{"stage":"OUTBURST","artist":"VLADA","start":420,"end":600},{"stage":"OUTBURST","artist":"KONDUKU","start":600,"end":780},{"stage":"OUTBURST","artist":"PEVERELIST","start":780,"end":840},{"stage":"OUTBURST","artist":"ROMAN FLÜGEL","start":840,"end":1020},{"stage":"OUTBURST","artist":"IVAN SMAGGHE","start":1020,"end":1200},{"stage":"STALLIONS","artist":"JANE FITZ & PAQUITA GORDON","start":0,"end":180},{"stage":"STALLIONS","artist":"RENATA","start":240,"end":360},{"stage":"STALLIONS","artist":"JONNY ROCK","start":360,"end":540},{"stage":"STALLIONS","artist":"ROB MELLO","start":540,"end":720},{"stage":"STALLIONS","artist":"LUKE UNA","start":720,"end":900},{"stage":"STALLIONS","artist":"CHEZ DAMIER","start":900,"end":1080},{"stage":"STALLIONS","artist":"PROSUMER","start":1080,"end":1260},{"stage":"STALLIONS","artist":"DESYN","start":1260,"end":1440},{"stage":"THE OLD GRAMOPHONE","artist":"O.BEE & TOMAS STATION","start":0,"end":120},{"stage":"THE OLD GRAMOPHONE","artist":"PEACH (R&B SET)","start":120,"end":240},{"stage":"THE OLD GRAMOPHONE","artist":"RADIOACTIVE MAN (REGGAE SET)","start":240,"end":300},{"stage":"THE OLD GRAMOPHONE","artist":"UNCLE AL & SHERMAN","start":300,"end":480},{"stage":"THE OLD GRAMOPHONE","artist":"TOKYO RIDDIM BAND","start":480,"end":540},{"stage":"THE OLD GRAMOPHONE","artist":"GIDEÖN (REGGAE SET)","start":540,"end":660},{"stage":"THE OLD GRAMOPHONE","artist":"DONNA LEAKE","start":660,"end":780},{"stage":"THE OLD GRAMOPHONE","artist":"SCIENTIST (LIVE)","start":780,"end":840},{"stage":"THE OLD GRAMOPHONE","artist":"MARK ERNESTUS & TIKIMAN","start":840,"end":960},{"stage":"THE OLD GRAMOPHONE","artist":"CALIBRE","start":960,"end":1080},{"stage":"THE OLD GRAMOPHONE","artist":"NIDIA","start":1080,"end":1200},{"stage":"THE OLD GRAMOPHONE","artist":"KYLE TOOLE & KIAN OK","start":1380,"end":1440},{"stage":"GIANT STEPS","artist":"CAMERON CULLEN","start":0,"end":60},{"stage":"GIANT STEPS","artist":"KIAN OK","start":60,"end":180},{"stage":"GIANT STEPS","artist":"KYLE TOOLE","start":180,"end":300},{"stage":"GIANT STEPS","artist":"WAYNE HOLLAND","start":300,"end":420},{"stage":"GIANT STEPS","artist":"NICOLAS MATAR","start":420,"end":540},{"stage":"GIANT STEPS","artist":"FELIX DICKINSON","start":540,"end":660},{"stage":"GIANT STEPS","artist":"ELIPHINO","start":660,"end":780},{"stage":"GIANT STEPS","artist":"KRISHAN","start":780,"end":900},{"stage":"GIANT STEPS","artist":"BELLE BÊTE","start":900,"end":1020},{"stage":"GIANT STEPS","artist":"CEDRIC WOO","start":1020,"end":1140},{"stage":"GIANT STEPS","artist":"ANEESH","start":1140,"end":1260},{"stage":"GIANT STEPS","artist":"AMIT","start":1260,"end":1380},{"stage":"GIANT STEPS","artist":"JUAN BLANCO","start":1380,"end":1440},{"stage":"SCULPTURE GARDEN","artist":"TOURS","start":0,"end":120},{"stage":"SCULPTURE GARDEN","artist":"TOURS","start":480,"end":720},{"stage":"SCULPTURE GARDEN","artist":"TOURS","start":1260,"end":1440},{"stage":"THE ORCHARD","artist":"THE BEAT BOUTIQUE LIVE (4BEAT VINYASA)","start":60,"end":120},{"stage":"THE ORCHARD","artist":"ELIXIR (BARRE + PILATES)","start":150,"end":210},{"stage":"THE ORCHARD","artist":"YAMUNA BODY ROLLING","start":240,"end":300},{"stage":"THE ORCHARD","artist":"SOUNDBATH WITH MICHELLE CADE","start":360,"end":420},{"stage":"THE ORCHARD","artist":"BREATH TO UPLIFT WITH GIGI","start":450,"end":510},{"stage":"THE ORCHARD","artist":"LIFE DRAWING WITH SOPHIA SHUVALOVA","start":510,"end":600},{"stage":"THE ORCHARD","artist":"HARRY MCCANNA","start":780,"end":840},{"stage":"THE ORCHARD","artist":"HOWIE B & HIRAKI SAWA (LIVE)","start":840,"end":900},{"stage":"THE ORCHARD","artist":"5IVE","start":900,"end":1020},{"stage":"THE ORCHARD","artist":"JASON LINDNER & AUDIO CURRENCY","start":1020,"end":1080},{"stage":"THE ORCHARD","artist":"ETAPE AND BABY VULTURE","start":1080,"end":1260},{"stage":"THE ARMADILLO","artist":"BOBBY.","start":120,"end":180},{"stage":"THE ARMADILLO","artist":"TALK: AFROFUTURISM IN CONTEMPORARY ELECTRONIC MUSIC WITH SAUL WILLIAMS,","start":180,"end":240},{"stage":"THE ARMADILLO","artist":"PROSUMER","start":240,"end":300},{"stage":"THE ARMADILLO","artist":"TALK: TECHNOSHAMANISM WITH VIVIANA CARO, AL WOOTTON,","start":300,"end":360},{"stage":"THE ARMADILLO","artist":"ROMAN FLUGEL","start":360,"end":420},{"stage":"THE ARMADILLO","artist":"TALK: BALANCE PRESENTS WITH SHANTI CELESTE, LUKE UNA AND TOM COLVILLE","start":420,"end":480},{"stage":"THE ARMADILLO","artist":"MAYBE LAURA","start":480,"end":600},{"stage":"THE ARMADILLO","artist":"ARIO","start":600,"end":780}],"sun":[{"stage":"DERREN SMART STAGE","artist":"COAST 2 COAST (THE GHOST & GENE ON EARTH)","start":120,"end":300},{"stage":"DERREN SMART STAGE","artist":"DR BANANA","start":300,"end":480},{"stage":"DERREN SMART STAGE","artist":"DANNY DAZE","start":480,"end":600},{"stage":"DERREN SMART STAGE","artist":"FREAKENSTEIN","start":600,"end":720},{"stage":"DERREN SMART STAGE","artist":"HELENA HAUFF","start":720,"end":840},{"stage":"DERREN SMART STAGE","artist":"MARIE DAVIDSON (LIVE)","start":840,"end":900},{"stage":"DERREN SMART STAGE","artist":"REPTANT (DJ SET)","start":900,"end":1020},{"stage":"PINTERS","artist":"MILES WONDERFULSOUND","start":60,"end":120},{"stage":"PINTERS","artist":"SVEN FIGEE (SOLO PIANO)","start":120,"end":180},{"stage":"PINTERS","artist":"MILES WONDERFULSOUND","start":180,"end":240},{"stage":"PINTERS","artist":"NIK BÄRTSCH (SOLO PIANO)","start":240,"end":300},{"stage":"PINTERS","artist":"MILES WONDERFULSOUND","start":300,"end":360},{"stage":"PINTERS","artist":"SHA & JAMES GILLIGAN (LIVE)","start":360,"end":420},{"stage":"PINTERS","artist":"ADAM SHELTON","start":420,"end":480},{"stage":"PINTERS","artist":"LOULA YORKE (LIVE)","start":480,"end":540},{"stage":"PINTERS","artist":"MANFREDAS","start":540,"end":600},{"stage":"PINTERS","artist":"MARY LATTIMORE (LIVE)","start":600,"end":660},{"stage":"PINTERS","artist":"PARAMIDA (BALEARIC SET)","start":660,"end":720},{"stage":"PINTERS","artist":"WARRINGTON-RUNCORN NEW TOWN DEVELOPMENT PLAN (LIVE)","start":720,"end":780},{"stage":"PINTERS","artist":"HARRI PEPPER","start":780,"end":840},{"stage":"PINTERS","artist":"GREG PAULUS (LIVE)","start":840,"end":900},{"stage":"THE WAREHOUSE","artist":"ADAM SHELTON","start":180,"end":330},{"stage":"THE WAREHOUSE","artist":"CARL H","start":330,"end":480},{"stage":"THE WAREHOUSE","artist":"PAQUITA GORDON","start":480,"end":660},{"stage":"THE WAREHOUSE","artist":"AURORA HALAL (LIVE)","start":660,"end":720},{"stage":"THE WAREHOUSE","artist":"JOHN TALABOT","start":720,"end":900},{"stage":"THE QUARRY","artist":"KIAN OK","start":180,"end":360},{"stage":"THE QUARRY","artist":"JADE SEATLE","start":360,"end":540},{"stage":"THE QUARRY","artist":"ELLIE STOKES","start":540,"end":690},{"stage":"THE QUARRY","artist":"MARIIIN","start":690,"end":840},{"stage":"THE QUARRY","artist":"Z@P (LIVE)","start":840,"end":900},{"stage":"THE QUARRY","artist":"NICOLAS LUTZ","start":900,"end":1080},{"stage":"THE PAVILION","artist":"OBEE & TOMAS","start":120,"end":300},{"stage":"THE PAVILION","artist":"RICARDO VILLALOBOS","start":300,"end":480},{"stage":"THE PAVILION","artist":"DANDY JACK","start":480,"end":540},{"stage":"THE PAVILION","artist":"OGAZÓN","start":540,"end":720},{"stage":"THE PAVILION","artist":"CHRISTIAN AB","start":720,"end":900},{"stage":"THE PAVILION","artist":"BEN UFO","start":900,"end":1080},{"stage":"EARTHLING","artist":"FACTA & K-LONE","start":180,"end":360},{"stage":"EARTHLING","artist":"KIA","start":360,"end":510},{"stage":"EARTHLING","artist":"LIVWUTANG","start":510,"end":660},{"stage":"EARTHLING","artist":"PEVERELIST (LIVE)","start":660,"end":720},{"stage":"EARTHLING","artist":"BATU","start":720,"end":840},{"stage":"EARTHLING","artist":"OK WILLIAMS","start":840,"end":960},{"stage":"EARTHLING","artist":"DJRUM","start":960,"end":1080},{"stage":"OUTBURST","artist":"ANDY BAINBRIDGE (NOT AN ANIMAL)","start":180,"end":360},{"stage":"OUTBURST","artist":"DJ NATURE","start":360,"end":540},{"stage":"OUTBURST","artist":"5IVE","start":540,"end":720},{"stage":"OUTBURST","artist":"CHIDA","start":720,"end":900},{"stage":"OUTBURST","artist":"POWDER","start":900,"end":1080},{"stage":"STALLIONS","artist":"SHANTI CELESTE","start":0,"end":180},{"stage":"STALLIONS","artist":"HARRY & DAN PRESENT TEA DANCE","start":240,"end":540},{"stage":"STALLIONS","artist":"COLLEEN COSMO MURPHY","start":540,"end":720},{"stage":"STALLIONS","artist":"BILL BREWSTER","start":720,"end":900},{"stage":"STALLIONS","artist":"TAMA SUMO & LAKUTI","start":900,"end":1080},{"stage":"THE OLD GRAMOPHONE","artist":"KYLE TOOLE & KIAN OK","start":0,"end":120},{"stage":"THE OLD GRAMOPHONE","artist":"GREG PAULUS","start":120,"end":180},{"stage":"THE OLD GRAMOPHONE","artist":"DOUBLE AGENT 7","start":180,"end":300},{"stage":"THE OLD GRAMOPHONE","artist":"TRUTH & LIES","start":300,"end":420},{"stage":"THE OLD GRAMOPHONE","artist":"MANASSEH","start":420,"end":540},{"stage":"THE OLD GRAMOPHONE","artist":"CHRIS SULLIVAN","start":540,"end":660},{"stage":"THE OLD GRAMOPHONE","artist":"SWING & DINE FEAT. LLOYD MUSCLEHEAD (SAXON) GLADDY WAX, DAVID HILL TWINNY & TWINNO","start":660,"end":960},{"stage":"THE OLD GRAMOPHONE","artist":"PETER ADJAYE","start":960,"end":1080},{"stage":"GIANT STEPS","artist":"JUAN BLANCO","start":0,"end":60},{"stage":"GIANT STEPS","artist":"STUDIO BATSUMI","start":60,"end":180},{"stage":"GIANT STEPS","artist":"KEM","start":180,"end":300},{"stage":"GIANT STEPS","artist":"MANFREDAS","start":300,"end":420},{"stage":"GIANT STEPS","artist":"TIME IS AWAY","start":420,"end":540},{"stage":"GIANT STEPS","artist":"ROB MELLO","start":540,"end":660},{"stage":"GIANT STEPS","artist":"FABIAN","start":660,"end":780},{"stage":"GIANT STEPS","artist":"CLAUDE & KRISHAN","start":780,"end":900},{"stage":"GIANT STEPS","artist":"CEDRIC WOO & BELLE BETTE","start":900,"end":1020},{"stage":"GIANT STEPS","artist":"AMIT & ANEESH","start":1020,"end":1080},{"stage":"SCULPTURE GARDEN","artist":"TOURS","start":0,"end":120},{"stage":"SCULPTURE GARDEN","artist":"TOURS","start":480,"end":720},{"stage":"THE ORCHARD","artist":"FLOW AND GONG WITH LUCIA JIMÉNEZ & JULIM","start":60,"end":150},{"stage":"THE ORCHARD","artist":"SOUNDBATH WITH VERONIKA","start":180,"end":240},{"stage":"THE ORCHARD","artist":"TOM PARDHY LIFE CELEBRATION","start":270,"end":330},{"stage":"THE ORCHARD","artist":"TBC","start":360,"end":420},{"stage":"THE ORCHARD","artist":"LIFE DRAWING WITH SOPHIA","start":450,"end":510},{"stage":"THE ORCHARD","artist":"BREATHWORK BREATHE TO RESTORE","start":540,"end":630},{"stage":"THE ORCHARD","artist":"JASON LINDNER (LIVE KEYBOARD SOUND)","start":720,"end":780},{"stage":"THE ORCHARD","artist":"ADI","start":780,"end":900},{"stage":"THE ORCHARD","artist":"STUDIO BATSUMI","start":900,"end":1080},{"stage":"THE ARMADILLO","artist":"ALEX DOWNEY","start":120,"end":180},{"stage":"THE ARMADILLO","artist":"TALK: CHEZ DAMIER IN CONVERSATION WITH ROB","start":180,"end":240},{"stage":"THE ARMADILLO","artist":"TALK: DIGGING DEEP: TREVINOS X INVERTED AUDIO WITH SONJA MOONEAR, DR","start":240,"end":300},{"stage":"THE ARMADILLO","artist":"DOMINIC CAPELLO","start":300,"end":360},{"stage":"THE ARMADILLO","artist":"TALK: THE SOUND OF PSYCHEDELICS WITH DAVID LUKE & FREESIA","start":360,"end":420},{"stage":"THE ARMADILLO","artist":"CHEZ DE MILO","start":420,"end":480},{"stage":"THE ARMADILLO","artist":"FACTA & K LONE","start":480,"end":660}]};
+const DAYS = ['thu','fri','sat','sun'];
+const DAYNAMES = {thu:'Thursday',fri:'Friday',sat:'Saturday',sun:'Sunday'};
+const STAGE_ORDER = ['DERREN SMART STAGE','PINTERS','THE WAREHOUSE','THE QUARRY','THE PAVILION','EARTHLING','OUTBURST','TERMINUS','STALLIONS','THE OLD GRAMOPHONE','GIANT STEPS','SCULPTURE GARDEN','THE ORCHARD','THE ARMADILLO'];
+const TERMINUS_DAYS = ['fri','sat','sun'];
+const COLORS = ['#1F5A8A','#39603F','#C9821B','#6B3FA0','#B03A5B','#2A7A6C','#8A5A2B','#D2622A'];
+const HOUR = 48, DAY_MIN = 23*60;
+
+// act id = day~stage~start
+function aid(day,a){ return day+'~'+STAGE_ORDER.indexOf(a.stage)+'~'+a.start; }
+function fmt(m){ const h=(9+Math.floor(m/60))%24; return String(h).padStart(2,'0')+':'+String(m%60).padStart(2,'0'); }
+const ACTS = {};   // id -> {day, stage, artist, start, end}
+DAYS.forEach(d => DATA[d].forEach(a => { ACTS[aid(d,a)] = {day:d, ...a}; }));
+
+// ---------- state ----------
+const KEY='htn26-v1';
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e){ S = null; }
+if (!S || !S.people || !S.people.length) {
+  S = { people:[{id:'p1',name:'ME',color:COLORS[0]}], picks:{p1:[]}, active:'p1', day:'thu', view:'grid' };
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function person(id){ return S.people.find(p=>p.id===id); }
+function picksOf(id){ return (S.picks[id]||[]).filter(x=>ACTS[x]); }
+
+// ---------- header ----------
+function renderPeople(){
+  const row = document.getElementById('peopleRow');
+  row.innerHTML='';
+  S.people.forEach(p=>{
+    const b=document.createElement('button');
+    b.className='pchip'+(p.id===S.active?' on':'');
+    b.innerHTML=`<span class="pd" style="background:${p.color}"></span>${esc(p.name)}`;
+    b.onclick=()=>{ if(S.active===p.id){ openPersonSheet(p); } else { S.active=p.id; save(); renderAll(); } };
+    row.appendChild(b);
+  });
+  const add=document.createElement('button');
+  add.className='pchip add'; add.textContent='+ friend';
+  add.onclick=()=>openPersonSheet(null);
+  row.appendChild(add);
+}
+function renderTabs(){
+  const dt=document.getElementById('dayTabs'); dt.innerHTML='';
+  DAYS.forEach(d=>{
+    const n = picksOf(S.active).filter(x=>ACTS[x].day===d).length;
+    const b=document.createElement('button');
+    b.className='dtab'+(d===S.day?' on':'');
+    b.innerHTML=DAYNAMES[d].slice(0,3)+(n?`<span class="cnt">${n}</span>`:'');
+    b.onclick=()=>{ S.day=d; save(); renderAll(); };
+    dt.appendChild(b);
+  });
+  document.getElementById('vGrid').className='vtab'+(S.view==='grid'?' on':'');
+  document.getElementById('vPlan').className='vtab'+(S.view==='plan'?' on':'');
+}
+document.getElementById('vGrid').onclick=()=>{S.view='grid';save();renderAll();};
+document.getElementById('vPlan').onclick=()=>{S.view='plan';save();renderAll();};
+
+// ---------- grid ----------
+function renderGrid(){
+  const day=S.day;
+  const acts=DATA[day];
+  const stages=STAGE_ORDER.filter(s=>acts.some(a=>a.stage===s) || (s==='TERMINUS'&&TERMINUS_DAYS.includes(day)));
+  const wrap=document.createElement('div'); wrap.id='gridWrap';
+  const g=document.createElement('div'); g.className='grid';
+  // header
+  const hr=document.createElement('div'); hr.className='hdrRow';
+  hr.innerHTML='<div class="corner"></div>'+stages.map(s=>`<div class="shead">${esc(titleStage(s))}</div>`).join('');
+  g.appendChild(hr);
+  // body
+  const br=document.createElement('div'); br.className='bodyRow';
+  const gut=document.createElement('div'); gut.className='gutter gut';
+  gut.style.height=(DAY_MIN/60*HOUR)+'px';
+  for(let h=0;h<=23;h++){
+    const lab=document.createElement('div'); lab.className='hlabel';
+    lab.style.top=(h*HOUR)+'px'; lab.textContent=fmt(h*60);
+    gut.appendChild(lab);
+  }
+  br.appendChild(gut);
+  stages.forEach(s=>{
+    const col=document.createElement('div'); col.className='col';
+    col.style.height=(DAY_MIN/60*HOUR)+'px';
+    if(s==='TERMINUS'){
+      const n=document.createElement('div'); n.className='act note';
+      n.style.top='6px'; n.style.height=(DAY_MIN/60*HOUR-12)+'px';
+      n.innerHTML='<div class="nm">Open 24 hours<br><br>Secret line-up —<br>artists not announced</div>';
+      col.appendChild(n);
+    }
+    acts.filter(a=>a.stage===s).forEach(a=>{
+      const id=aid(day,a);
+      const el=document.createElement('button');
+      const durPx=(a.end-a.start)/60*HOUR;
+      el.className='act'+(durPx<34?' sm':'')+(picksOf(S.active).includes(id)?' mine':'');
+      el.style.top=(a.start/60*HOUR)+'px';
+      el.style.height=Math.max(durPx-2,16)+'px';
+      el.innerHTML=`<div class="nm">${esc(a.artist)}</div>`+(durPx>=44?`<div class="tm">${fmt(a.start)}–${fmt(a.end)}</div>`:'');
+      const dots=S.people.filter(p=>picksOf(p.id).includes(id));
+      if(dots.length){
+        el.innerHTML+=`<div class="dots">${dots.map(p=>`<span class="dot" style="background:${p.color}"></span>`).join('')}</div>`;
+      }
+      el.onclick=()=>togglePick(id);
+      col.appendChild(el);
+    });
+    br.appendChild(col);
+  });
+  g.appendChild(br);
+  wrap.appendChild(g);
+  const main=document.getElementById('main');
+  main.innerHTML=''; main.appendChild(wrap);
+  // scroll to first pick or festival start of action
+  const first=Math.min(...acts.map(a=>a.start));
+  wrap.scrollTop=Math.max(0,(isFinite(first)?first:0)/60*HOUR-20);
+}
+function titleStage(s){ return s.replace('DERREN SMART STAGE','DERREN SMART'); }
+function togglePick(id){
+  const arr=S.picks[S.active]||(S.picks[S.active]=[]);
+  const i=arr.indexOf(id);
+  if(i>=0) arr.splice(i,1); else arr.push(id);
+  save(); renderAll();
+}
+
+// ---------- plan ----------
+let planFilter='all';
+function renderPlan(){
+  const day=S.day;
+  const main=document.getElementById('main');
+  const el=document.createElement('div'); el.id='plan';
+  el.innerHTML=`<div class="dayTitle">${DAYNAMES[day]}</div>`;
+  // filters
+  const fr=document.createElement('div'); fr.className='filterRow';
+  const mk=(key,label,color)=>{
+    const b=document.createElement('button');
+    b.className='fchip'+(planFilter===key?' on':'');
+    b.innerHTML=(color?`<span class="pd" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};margin-right:5px"></span>`:'')+esc(label);
+    b.onclick=()=>{planFilter=key;renderAll();};
+    fr.appendChild(b);
+  };
+  mk('all','Everyone');
+  S.people.forEach(p=>mk(p.id,p.name,p.color));
+  el.appendChild(fr);
+
+  const ids=new Set();
+  const inFilter = planFilter==='all' ? S.people.map(p=>p.id) : [planFilter];
+  inFilter.forEach(pid=>picksOf(pid).forEach(x=>{ if(ACTS[x].day===day) ids.add(x); }));
+  const list=[...ids].map(x=>ACTS[x]).sort((a,b)=>a.start-b.start||a.end-b.end);
+
+  // per-person clashes for this day
+  const clashes=new Set();
+  S.people.forEach(p=>{
+    const mine=picksOf(p.id).filter(x=>ACTS[x].day===day).map(x=>ACTS[x]);
+    for(let i=0;i<mine.length;i++)for(let j=i+1;j<mine.length;j++){
+      const a=mine[i],b=mine[j];
+      if(a.start<b.end&&b.start<a.end){ clashes.add(aid(day,a)); clashes.add(aid(day,b)); }
+    }
+  });
+
+  if(!list.length){
+    el.innerHTML+=`<div class="empty">No picks for ${DAYNAMES[day]} yet.<br>Flip to Grid and tap the sets you want.</div>`;
+  }
+  list.forEach(a=>{
+    const id=aid(day,a);
+    const who=S.people.filter(p=>picksOf(p.id).includes(id));
+    const everyone=S.people.length>1&&who.length===S.people.length;
+    const clash=clashes.has(id)&&(planFilter==='all'||who.some(p=>p.id===planFilter));
+    const e=document.createElement('div');
+    e.className='entry'+(clash?' clash':'');
+    e.innerHTML=`
+      <div class="when"><div class="s">${fmt(a.start)}</div><div class="e">till ${fmt(a.end)}</div></div>
+      <div class="what">
+        <div class="a">${esc(a.artist)}${clash?'<span class="tag cl">clash</span>':''}${everyone?'<span class="tag all">everyone</span>':''}</div>
+        <div class="st">${esc(titleStage(a.stage))}</div>
+        <div class="who">${who.map(p=>`<span class="wchip"><span class="pd" style="background:${p.color}"></span>${esc(p.name)}</span>`).join('')}</div>
+      </div>`;
+    el.appendChild(e);
+  });
+  main.innerHTML=''; main.appendChild(el);
+}
+
+// ---------- person sheet ----------
+function openPersonSheet(p){
+  const sheet=document.getElementById('sheet');
+  sheet.className='open'; sheet.innerHTML='';
+  const inWrap=document.createElement('div'); inWrap.className='sheetIn';
+  inWrap.innerHTML=`<h2>${p?'Edit '+esc(p.name):'Add a friend'}</h2>`;
+  const row=document.createElement('div'); row.className='srow';
+  const input=document.createElement('input');
+  input.className='sin'; input.placeholder='Name (e.g. Kate)'; input.maxLength=14;
+  if(p) input.value=p.name;
+  row.appendChild(input);
+  const ok=document.createElement('button'); ok.className='sbtn solid'; ok.textContent=p?'Save':'Add';
+  ok.onclick=()=>{
+    const nm=input.value.trim().toUpperCase();
+    if(!nm) return;
+    if(p){ p.name=nm; }
+    else{
+      const id='p'+Date.now();
+      S.people.push({id,name:nm,color:COLORS[S.people.length%COLORS.length]});
+      S.picks[id]=[]; S.active=id;
+    }
+    save(); closeSheet(); renderAll();
+  };
+  row.appendChild(ok);
+  inWrap.appendChild(row);
+  if(p&&S.people.length>1){
+    const del=document.createElement('button'); del.className='sbtn danger';
+    del.textContent='Remove '+p.name;
+    del.onclick=()=>{
+      S.people=S.people.filter(x=>x.id!==p.id); delete S.picks[p.id];
+      if(S.active===p.id) S.active=S.people[0].id;
+      save(); closeSheet(); renderAll();
+    };
+    const r2=document.createElement('div'); r2.className='srow'; r2.appendChild(del);
+    inWrap.appendChild(r2);
+  }
+  const cancel=document.createElement('button'); cancel.className='sbtn'; cancel.textContent='Cancel';
+  cancel.onclick=closeSheet;
+  const r3=document.createElement('div'); r3.className='srow'; r3.appendChild(cancel);
+  inWrap.appendChild(r3);
+  sheet.appendChild(inWrap);
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  input.focus();
+}
+function closeSheet(){ const s=document.getElementById('sheet'); s.className=''; s.innerHTML=''; }
+
+// ---------- share ----------
+function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64d(s){ return decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))); }
+document.getElementById('shareBtn').onclick=()=>{
+  const sheet=document.getElementById('sheet');
+  sheet.className='open';
+  const me=person(S.active);
+  sheet.innerHTML=`<div class="sheetIn">
+    <h2>Share picks</h2>
+    <div class="shint">Send a link. When someone opens it, your picks appear on their planner (and theirs can come back to you the same way). Everything else works offline — no accounts, no server.</div>
+    <div class="srow"><button class="sbtn solid" id="shMine">Copy link — ${esc(me.name)}'s picks (${picksOf(S.active).length})</button></div>
+    <div class="srow"><button class="sbtn" id="shAll">Copy link — whole group</button></div>
+    <div class="srow"><button class="sbtn" id="shClose">Close</button></div>
+  </div>`;
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  const mkurl=payload=>location.origin+location.pathname+'#i='+b64e(JSON.stringify(payload));
+  document.getElementById('shMine').onclick=async ev=>{
+    const url=mkurl({v:1,people:[{n:me.name,p:picksOf(S.active)}]});
+    await copy(url, ev.target);
+  };
+  document.getElementById('shAll').onclick=async ev=>{
+    const url=mkurl({v:1,people:S.people.map(p=>({n:p.name,p:picksOf(p.id)}))});
+    await copy(url, ev.target);
+  };
+  document.getElementById('shClose').onclick=closeSheet;
+};
+async function copy(text,btn){
+  try{ await navigator.clipboard.writeText(text); }
+  catch(e){
+    const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); ta.remove();
+  }
+  const old=btn.textContent; btn.textContent='Copied ✓';
+  setTimeout(()=>{ btn.textContent=old; },1500);
+}
+
+// import from hash
+function checkImport(){
+  const m=location.hash.match(/#i=([A-Za-z0-9_\-]+)/);
+  if(!m) return;
+  let payload=null;
+  try{ payload=JSON.parse(b64d(m[1])); }catch(e){}
+  history.replaceState(null,'',location.pathname+location.search);
+  if(!payload||!payload.people||!payload.people.length) return;
+  const banner=document.getElementById('banner');
+  const names=payload.people.map(p=>p.n).join(', ');
+  const total=payload.people.reduce((s,p)=>s+(p.p||[]).length,0);
+  banner.className='show';
+  banner.innerHTML=`<div class="bIn">
+    <span class="msg">Import picks from ${esc(names)} (${total} sets)?</span>
+    <button class="pri" id="impYes">Import</button><button id="impNo">Ignore</button>
+  </div>`;
+  document.getElementById('impYes').onclick=()=>{
+    payload.people.forEach(inc=>{
+      const nm=String(inc.n||'FRIEND').toUpperCase().slice(0,14);
+      const valid=(inc.p||[]).filter(x=>ACTS[x]);
+      let ex=S.people.find(p=>p.name===nm);
+      if(!ex){
+        ex={id:'p'+Date.now()+Math.floor(Math.random()*999),name:nm,color:COLORS[S.people.length%COLORS.length]};
+        S.people.push(ex);
+      }
+      S.picks[ex.id]=valid;
+    });
+    save(); banner.className=''; banner.innerHTML=''; renderAll();
+  };
+  document.getElementById('impNo').onclick=()=>{ banner.className=''; banner.innerHTML=''; };
+}
+
+// ---------- misc ----------
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderAll(){
+  renderPeople(); renderTabs();
+  document.documentElement.style.setProperty('--headh',document.getElementById('hdr').offsetHeight+'px');
+  document.getElementById('main').style.top=document.getElementById('hdr').offsetHeight+'px';
+  if(S.view==='grid') renderGrid(); else renderPlan();
+}
+window.addEventListener('resize',()=>{ document.getElementById('main').style.top=document.getElementById('hdr').offsetHeight+'px'; });
+renderAll();
+checkImport();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
