@@ -121,6 +121,13 @@ main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
 /* ---------- SHEET / BANNER ---------- */
 #sheet{position:fixed;inset:0;z-index:50;display:none;align-items:flex-end;background:rgba(0,0,0,.4)}
 #sheet.open{display:flex}
+#sheet.center{align-items:center;justify-content:center;padding:16px}
+.sheetIn.modal{border:2.5px solid var(--ink);max-width:420px;box-shadow:8px 8px 0 rgba(0,0,0,.3)}
+.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:6px}
+.sw{aspect-ratio:1;border:none;position:relative;cursor:pointer}
+.sw.sel{outline:3px solid var(--ink);outline-offset:2.5px}
+.sw.taken{opacity:.3;pointer-events:none}
+.sw.taken span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700}
 .sheetIn{background:var(--paper);border-top:2.5px solid var(--ink);width:100%;padding:16px 16px calc(18px + env(safe-area-inset-bottom));max-height:78dvh;overflow-y:auto}
 .sheetIn h2{font-weight:800;font-size:18px;margin-bottom:12px;text-transform:uppercase}
 .srow{display:flex;gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
@@ -177,7 +184,11 @@ const DAYS = ['thu','fri','sat','sun'];
 const DAYNAMES = {thu:'Thursday',fri:'Friday',sat:'Saturday',sun:'Sunday'};
 const STAGE_ORDER = ['DERREN SMART STAGE','PINTERS','THE WAREHOUSE','THE QUARRY','THE PAVILION','EARTHLING','OUTBURST','TERMINUS','STALLIONS','THE OLD GRAMOPHONE','GIANT STEPS','SCULPTURE GARDEN','THE ORCHARD','THE ARMADILLO'];
 const TERMINUS_DAYS = ['fri','sat','sun'];
-const COLORS = ['#1976D2','#2E7D32','#D84315','#7B1FA2','#C2185B','#00796B','#303F9F','#D32F2F','#6D4C41','#455A64'];
+const COLORS = ['#1976D2','#2E7D32','#D84315','#7B1FA2','#C2185B','#00796B','#303F9F','#D32F2F','#6D4C41','#455A64','#0277BD','#558B2F'];
+const COLORS_EXTRA = ['#AD1457','#4527A0','#00695C','#BF360C','#1B5E20','#0D47A1','#4E342E','#263238','#880E4F','#311B92','#01579B','#33691E'];
+const ALLCOLORS = COLORS.concat(COLORS_EXTRA);
+function takenColors(exceptId){ return S.people.filter(p=>p.id!==exceptId).map(p=>p.color); }
+function freeColor(){ const t=takenColors(); return ALLCOLORS.find(c=>!t.includes(c))||ALLCOLORS[S.people.length%ALLCOLORS.length]; }
 const HOUR = 48, DAY_MIN = 23*60;
 
 // act id = day~stage~start
@@ -196,7 +207,12 @@ if (!S || !S.people) {
 if(!S.planDay) S.planDay='all';
 if(S.active && !S.people.find(p=>p.id===S.active)) S.active=null;
 if(!S.active && S.people.length) S.active=S.people[0].id;
-S.people.forEach((p,i)=>{ if(!COLORS.includes(p.color)) p.color=COLORS[i%COLORS.length]; });
+S.people.forEach(p=>{
+  if(!ALLCOLORS.includes(p.color)){
+    const t=S.people.filter(x=>x!==p).map(x=>x.color);
+    p.color=ALLCOLORS.find(c=>!t.includes(c))||ALLCOLORS[0];
+  }
+});
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function person(id){ return S.people.find(p=>p.id===id); }
 function picksOf(id){ return (S.picks[id]||[]).filter(x=>ACTS[x]); }
@@ -424,46 +440,70 @@ function renderPlan(){
   main.innerHTML=''; main.appendChild(el);
 }
 
-// ---------- person sheet ----------
+// ---------- join / edit person (floating card) ----------
 function openPersonSheet(p){
   const sheet=document.getElementById('sheet');
-  sheet.className='open'; sheet.innerHTML='';
-  const inWrap=document.createElement('div'); inWrap.className='sheetIn';
-  inWrap.innerHTML=`<h2>${p?'Edit '+esc(p.name):'Join the party'}</h2>`+(p?'':'<div class="shint">Add yourself — and anyone whose picks you\'re wrangling. Everyone gets a colour.</div>');
+  sheet.className='open center'; sheet.innerHTML='';
+  const taken=takenColors(p&&p.id);
+  const baseAllTaken=COLORS.every(c=>taken.includes(c));
+  const palette=(baseAllTaken||(p&&COLORS_EXTRA.includes(p.color)))?ALLCOLORS:COLORS;
+  let sel=p?p.color:(palette.find(c=>!taken.includes(c))||palette[0]);
+
+  const inWrap=document.createElement('div'); inWrap.className='sheetIn modal';
+  inWrap.innerHTML=`<h2>${p?'Edit '+esc(p.name):'Join the party'}</h2>`
+    +(p?'':'<div class="shint">Pick a name and a colour — that colour is you, everywhere on the timetable.</div>');
   const row=document.createElement('div'); row.className='srow';
   const input=document.createElement('input');
   input.className='sin'; input.placeholder='Your name'; input.maxLength=14;
   if(p) input.value=p.name;
   row.appendChild(input);
+  inWrap.appendChild(row);
+
+  const swBox=document.createElement('div'); swBox.className='swatches';
+  function paintSwatches(){
+    swBox.innerHTML='';
+    palette.forEach(c=>{
+      const isTaken=taken.includes(c);
+      const b=document.createElement('button');
+      b.className='sw'+(c===sel?' sel':'')+(isTaken?' taken':'');
+      b.style.background=c;
+      b.setAttribute('aria-label','colour '+c+(isTaken?' (taken)':''));
+      if(isTaken) b.innerHTML='<span>✕</span>';
+      else b.onclick=()=>{ sel=c; paintSwatches(); };
+      swBox.appendChild(b);
+    });
+  }
+  paintSwatches();
+  inWrap.appendChild(swBox);
+
+  const r2=document.createElement('div'); r2.className='srow'; r2.style.marginTop='14px';
   const ok=document.createElement('button'); ok.className='sbtn solid'; ok.textContent=p?'Save':'Join';
   ok.onclick=()=>{
     const nm=input.value.trim().toUpperCase();
-    if(!nm) return;
-    if(p){ p.name=nm; }
+    if(!nm){ input.focus(); return; }
+    if(p){ p.name=nm; p.color=sel; }
     else{
       const id='p'+Date.now();
-      S.people.push({id,name:nm,color:COLORS[S.people.length%COLORS.length]});
+      S.people.push({id,name:nm,color:sel});
       S.picks[id]=[]; S.active=id;
     }
     save(); closeSheet(); renderAll();
   };
-  row.appendChild(ok);
-  inWrap.appendChild(row);
+  r2.appendChild(ok);
+  const cancel=document.createElement('button'); cancel.className='sbtn'; cancel.textContent='Cancel';
+  cancel.onclick=closeSheet;
+  r2.appendChild(cancel);
   if(p){
     const del=document.createElement('button'); del.className='sbtn danger';
-    del.textContent='Remove '+p.name;
+    del.textContent='Remove';
     del.onclick=()=>{
       S.people=S.people.filter(x=>x.id!==p.id); delete S.picks[p.id];
       if(S.active===p.id) S.active=S.people.length?S.people[0].id:null;
       save(); closeSheet(); renderAll();
     };
-    const r2=document.createElement('div'); r2.className='srow'; r2.appendChild(del);
-    inWrap.appendChild(r2);
+    r2.appendChild(del);
   }
-  const cancel=document.createElement('button'); cancel.className='sbtn'; cancel.textContent='Cancel';
-  cancel.onclick=closeSheet;
-  const r3=document.createElement('div'); r3.className='srow'; r3.appendChild(cancel);
-  inWrap.appendChild(r3);
+  inWrap.appendChild(r2);
   sheet.appendChild(inWrap);
   sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
   input.focus();
@@ -623,7 +663,7 @@ function checkImport(){
       const valid=(inc.p||[]).filter(x=>ACTS[x]);
       let ex=S.people.find(p=>p.name===nm);
       if(!ex){
-        ex={id:'p'+Date.now()+Math.floor(Math.random()*999),name:nm,color:COLORS[S.people.length%COLORS.length]};
+        ex={id:'p'+Date.now()+Math.floor(Math.random()*999),name:nm,color:freeColor()};
         S.people.push(ex);
       }
       S.picks[ex.id]=valid;
