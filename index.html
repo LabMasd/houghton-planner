@@ -32,6 +32,11 @@ header{background:var(--paper);position:relative;z-index:20;padding-top:env(safe
 .pchip{display:flex;align-items:center;gap:6px;border:1px solid var(--grey3);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;flex:0 0 auto;color:var(--pc,var(--ink));background:var(--paper)}
 .pchip.on{background:var(--pc,var(--ink));border-color:var(--pc,var(--ink));color:var(--pt,#fff)}
 .pchip.add{border:1px dashed var(--grey3);color:var(--txt2);font-weight:500}
+.pchip{position:relative}
+.hostb{position:absolute;top:-6px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--ink);color:#fff;
+  font-size:9px;line-height:16px;text-align:center;border:1.5px solid var(--paper)}
+.hostt{display:inline-block;margin-left:8px;background:var(--ink);color:var(--paper);border-radius:999px;
+  padding:1px 8px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;vertical-align:2px}
 .tabs{display:flex;align-items:center;gap:8px;padding:0 16px 12px;border-top:none}
 .days{display:flex;flex:1;background:var(--grey1);border-radius:999px;padding:3px}
 .dtab{flex:1;padding:7px 0;text-align:center;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;color:var(--txt2);position:relative}
@@ -221,7 +226,9 @@ S.people.forEach(p=>{
 });
 function save(skipPush){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} if(!skipPush) partyQueue(); }
 function person(id){ return S.people.find(p=>p.id===id); }
-function pname(p){ return (S.roomOrgP&&p.id===S.roomOrgP?'* ':'')+p.name; }
+function pname(p){ return p.name; }
+function isHost(p){ return !!(S.roomOrgP&&p.id===S.roomOrgP); }
+function hostTag(p){ return isHost(p)?'<span class="hostt">Host</span>':''; }
 function picksOf(id){ return (S.picks[id]||[]).filter(x=>ACTS[x]); }
 
 // ---------- header ----------
@@ -242,7 +249,7 @@ function renderPeople(){
     b.className='pchip'+(p.id===S.active?' on':'');
     b.style.setProperty('--pc',p.color);
     b.style.setProperty('--pt',textOn(p.color));
-    b.textContent=pname(p);
+    b.innerHTML=esc(p.name)+(isHost(p)?'<span class="hostb">★</span>':'');
     b.onclick=()=>{ S.active=p.id; save(); renderAll(); openPersonView(p); };
     row.appendChild(b);
   });
@@ -359,7 +366,7 @@ function openActSheet(id){
       const going=picksOf(p.id).includes(id);
       const tp=textOn(p.color);
       return `<button class="pbig${going?' going':''}" data-p="${p.id}" style="--pc:${p.color};--pt:${tp}">
-        <span class="pd" style="background:${going?tp:p.color}"></span>${esc(pname(p))}
+        <span class="pd" style="background:${going?tp:p.color}"></span>${esc(p.name)}${hostTag(p)}
         <span class="st2">${going?'Going ✓':'Not going'}</span></button>`;
     }).join('');
   }
@@ -619,7 +626,7 @@ function openPersonView(p){
   });
   if(!body) body='<div class="shint">No picks yet — tap sets in the grid or use Search.</div>';
   sheet.innerHTML=`<div class="sheetIn">
-    <h2><span class="pd" style="background:${p.color};width:12px;height:12px;margin-right:6px"></span>${esc(pname(p))}</h2>
+    <h2><span class="pd" style="background:${p.color};width:12px;height:12px;margin-right:6px"></span>${esc(p.name)}${hostTag(p)}</h2>
     ${body}
     <div class="srow" style="margin-top:10px">
       ${(FIREBASE_CONFIG&&S.room&&!canEdit(p.id))?'<button class="sbtn solid" id="pvClaim">This is me — claim</button>':''}
@@ -685,7 +692,7 @@ function subscribeRoom(id){
     const pk=v.picks||{};
     Object.keys(pk).forEach(k=>{ S.picks[k]=Object.values(pk[k]||{}).filter(x=>ACTS[x]); });
     if(S.active&&!S.people.find(p=>p.id===S.active)) S.active=S.people.length?S.people[0].id:null;
-    save(true); renderAll();
+    save(true); renderAll(); syncUrl();
     applyingRemote=false;
     if(isOrganizer()&&!S.roomOrgP){
       const mine=S.people.find(p=>claimed.has(p.id));
@@ -733,9 +740,15 @@ async function createParty(name,lib){
 function leaveParty(){
   if(roomUnsub){ roomUnsub(); roomUnsub=null; }
   S.room=null; S.roomOrg=null; S.roomName=null; S.roomLib=null; S.roomOrgP=null;
-  save(true); renderAll();
+  save(true); renderAll(); syncUrl();
 }
 function partyLink(){ return location.origin+location.pathname+'#r='+S.room; }
+function syncUrl(){
+  try{
+    if(S.room) history.replaceState(null,'',location.pathname+location.search+'#r='+S.room);
+    else if(location.hash.startsWith('#r=')) history.replaceState(null,'',location.pathname+location.search);
+  }catch(e){}
+}
 async function sendVia(text,url){
   if(navigator.share){
     try{ await navigator.share({text,url}); }catch(e){}
@@ -765,7 +778,7 @@ function openWhoSheet(){
   const rows=S.people.map(p=>{
     const mine=claimed.has(p.id);
     return `<button class="pbig" data-p="${p.id}" style="--pc:${p.color};--pt:${textOn(p.color)}"${mine?' disabled':''}>
-      <span class="pd" style="background:${p.color}"></span>${esc(pname(p))}
+      <span class="pd" style="background:${p.color}"></span>${esc(p.name)}${hostTag(p)}
       <span class="st2">${mine?'You':(p.pin?'Enter code to claim':'Free to claim')}</span></button>`;
   }).join('');
   sheet.innerHTML=`<div class="sheetIn modal">
@@ -852,7 +865,7 @@ function openPartySheet(){
   const members=S.people.map(p=>{
     const mine=claimed.has(p.id);
     return `<div class="pvrow"><span class="pd" style="background:${p.color}"></span>
-      <span class="n">${esc(pname(p))}</span>
+      <span class="n">${esc(p.name)}${hostTag(p)}</span>
       <span class="s">${mine?'YOURS':(p.pin?'CLAIMED':'UNCLAIMED')}</span></div>`;
   }).join('');
   sheet.innerHTML=`<div class="sheetIn modal wide">
@@ -981,6 +994,7 @@ function jumpTo(id){
 function checkImport(){
   const rm=location.hash.match(/#r=([A-Za-z0-9_\-]+)/);
   if(rm){
+    if(S.room===rm[1]) return;
     history.replaceState(null,'',location.pathname+location.search);
     const banner=document.getElementById('banner');
     if(!FIREBASE_CONFIG){
