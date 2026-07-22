@@ -329,6 +329,7 @@ function renderGrid(){
 function titleStage(s){ return s.replace('DERREN SMART STAGE','DERREN SMART'); }
 function togglePick(id){
   if(!S.active){ openPersonSheet(null); return; }
+  if(!canEdit(S.active)){ openClaimSheet(S.active); return; }
   const arr=S.picks[S.active]||(S.picks[S.active]=[]);
   const i=arr.indexOf(id);
   if(i>=0) arr.splice(i,1); else arr.push(id);
