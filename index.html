@@ -454,13 +454,12 @@ function openWelcome(){
     <div class="shint">The full timetable, tappable. Mark the sets you want, see who's going where, and plan the weekend together — live on everyone's phone.</div>
     <div class="srow"><button class="sbtn solid" id="wStart">Start a party</button></div>
     <div class="shint" style="margin:2px 0 12px">You'll be the organizer — name the party, choose its colour set, add your name, then invite the others with one link.</div>
-    <div class="srow"><button class="sbtn" id="wCode">I have a party code</button><button class="sbtn" id="wSolo">Just plan for myself</button></div>
-    <div class="shint" style="margin-top:12px">Invite links work too — opening one joins its party automatically.</div>
+    <div class="srow"><button class="sbtn" id="wCode">I have a party code</button></div>
+    <div class="shint" style="margin-top:12px">Planning alone? Just start a party and don't invite anyone — you can always share the code later. Invite links work too — opening one joins its party automatically.</div>
   </div>`;
   sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
   document.getElementById('wStart').onclick=()=>openPartySheet();
   document.getElementById('wCode').onclick=openCodeSheet;
-  document.getElementById('wSolo').onclick=()=>openPersonSheet(null);
 }
 function openCodeSheet(){
   const sheet=document.getElementById('sheet');
