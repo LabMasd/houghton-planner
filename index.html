@@ -253,10 +253,12 @@ function renderPeople(){
     b.onclick=()=>{ S.active=p.id; save(); renderAll(); openPersonView(p); };
     row.appendChild(b);
   });
-  const add=document.createElement('button');
-  add.className='pchip add'; add.textContent=(FIREBASE_CONFIG&&!S.room)?'+ start party':'+ add name';
-  add.onclick=()=>{ if(FIREBASE_CONFIG&&!S.room) openWelcome(); else openPersonSheet(null); };
-  row.appendChild(add);
+  if(canAddSeat()||(FIREBASE_CONFIG&&!S.room)){
+    const add=document.createElement('button');
+    add.className='pchip add'; add.textContent=(FIREBASE_CONFIG&&!S.room)?'+ start party':'+ add name';
+    add.onclick=()=>{ if(FIREBASE_CONFIG&&!S.room) openWelcome(); else openPersonSheet(null); };
+    row.appendChild(add);
+  }
 }
 function renderTabs(){
   const dt=document.getElementById('dayTabs'); dt.innerHTML='';
@@ -513,6 +515,18 @@ function openCodeSheet(){
 
 // ---------- join / edit person (floating card) ----------
 function openPersonSheet(p,onDone){
+  if(!p&&!canAddSeat()){
+    const sheet=document.getElementById('sheet');
+    sheet.className='open center';
+    sheet.innerHTML=`<div class="sheetIn modal">
+      <h2>One seat each</h2>
+      <div class="shint">You've already got your name in this party. Need to add someone else? Ask the host — they manage the guest list.</div>
+      <div class="srow"><button class="sbtn" id="osOk">OK</button></div>
+    </div>`;
+    sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+    document.getElementById('osOk').onclick=closeSheet;
+    return;
+  }
   const sheet=document.getElementById('sheet');
   sheet.className='open center'; sheet.innerHTML='';
   const taken=takenColors(p&&p.id);
@@ -660,6 +674,11 @@ async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncod
 function inParty(){ return !!(FIREBASE_CONFIG && S.room && FB); }
 function isOrganizer(){ return inParty() && S.roomOrg===myUid; }
 function canEdit(pid){ if(!(FIREBASE_CONFIG&&S.room)) return true; return claimed.has(pid)||isOrganizer(); }
+function canAddSeat(){
+  if(!(FIREBASE_CONFIG&&S.room)) return true;
+  if(isOrganizer()) return true;
+  return !S.people.some(p=>claimed.has(p.id));
+}
 async function initParty(){
   if(!FIREBASE_CONFIG) return;
   try{
@@ -785,11 +804,12 @@ function openWhoSheet(){
     <h2>Who are you?</h2>
     <div class="shint">Tap your name to claim it — you'll set a 4-digit code so only you can edit your picks.</div>
     ${rows||''}
-    <div class="srow" style="margin-top:8px"><button class="sbtn solid" id="whoNew">I'm not on the list</button><button class="sbtn" id="whoLater">Later</button></div>
+    <div class="srow" style="margin-top:8px">${canAddSeat()?'<button class="sbtn solid" id="whoNew">I\'m not on the list</button>':''}<button class="sbtn" id="whoLater">Later</button></div>
   </div>`;
   sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
   document.getElementById('whoLater').onclick=closeSheet;
-  document.getElementById('whoNew').onclick=()=>openPersonSheet(null);
+  const wn=document.getElementById('whoNew');
+  if(wn) wn.onclick=()=>openPersonSheet(null);
   sheet.querySelectorAll('.pbig[data-p]').forEach(b=>{
     b.onclick=()=>openClaimSheet(b.dataset.p);
   });
