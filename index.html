@@ -226,6 +226,15 @@ function picksOf(id){ return (S.picks[id]||[]).filter(x=>ACTS[x]); }
 function renderPeople(){
   const row = document.getElementById('peopleRow');
   row.innerHTML='';
+  if(FIREBASE_CONFIG&&S.room){
+    const pc=document.createElement('button');
+    pc.className='pchip on';
+    pc.style.setProperty('--pc','#0A0A0A');
+    pc.style.setProperty('--pt','#FFFFFF');
+    pc.textContent='★ '+(S.roomName||'PARTY');
+    pc.onclick=openPartySheet;
+    row.appendChild(pc);
+  }
   S.people.forEach(p=>{
     const b=document.createElement('button');
     b.className='pchip'+(p.id===S.active?' on':'');
@@ -236,7 +245,7 @@ function renderPeople(){
     row.appendChild(b);
   });
   const add=document.createElement('button');
-  add.className='pchip add'; add.textContent=(FIREBASE_CONFIG&&!S.room)?'+ party':'+ join';
+  add.className='pchip add'; add.textContent=(FIREBASE_CONFIG&&!S.room)?'+ start party':'+ add name';
   add.onclick=()=>{ if(FIREBASE_CONFIG&&!S.room) openWelcome(); else openPersonSheet(null); };
   row.appendChild(add);
 }
