@@ -235,8 +235,8 @@ function renderPeople(){
     row.appendChild(b);
   });
   const add=document.createElement('button');
-  add.className='pchip add'; add.textContent='+ join party';
-  add.onclick=()=>openPersonSheet(null);
+  add.className='pchip add'; add.textContent=(FIREBASE_CONFIG&&!S.room)?'+ party':'+ join';
+  add.onclick=()=>{ if(FIREBASE_CONFIG&&!S.room) openWelcome(); else openPersonSheet(null); };
   row.appendChild(add);
 }
 function renderTabs(){
@@ -454,12 +454,43 @@ function openWelcome(){
     <div class="shint">The full timetable, tappable. Mark the sets you want, see who's going where, and plan the weekend together — live on everyone's phone.</div>
     <div class="srow"><button class="sbtn solid" id="wStart">Start a party</button></div>
     <div class="shint" style="margin:2px 0 12px">You'll be the organizer — name the party, choose its colour set, add your name, then invite the others with one link.</div>
-    <div class="srow"><button class="sbtn" id="wSolo">Just plan for myself</button></div>
-    <div class="shint" style="margin-top:12px">Got an invite link from a friend? Open that link instead — no setup needed.</div>
+    <div class="srow"><button class="sbtn" id="wCode">I have a party code</button><button class="sbtn" id="wSolo">Just plan for myself</button></div>
+    <div class="shint" style="margin-top:12px">Invite links work too — opening one joins its party automatically.</div>
   </div>`;
   sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
   document.getElementById('wStart').onclick=()=>openPartySheet();
+  document.getElementById('wCode').onclick=openCodeSheet;
   document.getElementById('wSolo').onclick=()=>openPersonSheet(null);
+}
+function openCodeSheet(){
+  const sheet=document.getElementById('sheet');
+  sheet.className='open center';
+  sheet.innerHTML=`<div class="sheetIn modal">
+    <h2>Join a party</h2>
+    <div class="shint">Type the code your organizer shared.</div>
+    <div class="srow"><input class="sin" id="pcIn" placeholder="PARTY CODE" maxlength="12" autocomplete="off"
+      style="text-transform:uppercase;text-align:center;letter-spacing:.3em;font-weight:700;font-size:20px"></div>
+    <div class="srow"><button class="sbtn solid" id="pcGo">Join</button><button class="sbtn" id="pcNo">Cancel</button></div>
+    <div class="shint" id="pcErr" style="color:var(--red);display:none">No party found with that code.</div>
+  </div>`;
+  sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+  document.getElementById('pcNo').onclick=closeSheet;
+  const go=async()=>{
+    const code=document.getElementById('pcIn').value.trim().toUpperCase();
+    const err=document.getElementById('pcErr');
+    if(!code||!FB) return;
+    try{
+      const snap=await FB.m.get(FB.m.ref(FB.db,'rooms/'+code));
+      if(!snap.exists()){ err.textContent='No party found with that code.'; err.style.display='block'; return; }
+      S.room=code; save(true); subscribeRoom(code); closeSheet();
+      setTimeout(()=>{ if(!S.people.some(p=>claimed.has(p.id))) openPersonSheet(null); },600);
+    }catch(e){
+      err.textContent='Could not check the code — are you online?'; err.style.display='block';
+    }
+  };
+  document.getElementById('pcGo').onclick=go;
+  document.getElementById('pcIn').onkeydown=e=>{ if(e.key==='Enter') go(); };
+  document.getElementById('pcIn').focus();
 }
 
 // ---------- join / edit person (floating card) ----------
@@ -660,7 +691,8 @@ function partyRemovePerson(pid){
   FB.m.remove(FB.m.ref(FB.db,'rooms/'+S.room+'/picks/'+pid));
 }
 async function createParty(name,lib){
-  const id=Array.from(crypto.getRandomValues(new Uint8Array(9))).map(b=>'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'[b%54]).join('');
+  const AB='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  const id=Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b=>AB[b%AB.length]).join('');
   lib=PALETTES[lib]?lib:'flat';
   const pal=PALETTES[lib];
   const people={},picks={};
@@ -755,14 +787,19 @@ function openPartySheet(){
   }).join('');
   sheet.innerHTML=`<div class="sheetIn">
     <h2>${esc(S.roomName||'Party')}</h2>
-    <div class="shint">${isOrganizer()?'You are the organizer. ':''}Send this link — friends open it, claim their name (or join), set a passcode, and everything syncs live.</div>
-    <div class="srow"><button class="sbtn solid" id="ptCopy">Copy party link</button></div>
+    <div style="text-align:center;border:1px solid var(--grey2);border-radius:var(--rm);padding:12px;margin-bottom:12px">
+      <div class="shint" style="margin:0 0 4px">Party code</div>
+      <div style="font-size:28px;font-weight:800;letter-spacing:.3em">${esc(S.room)}</div>
+    </div>
+    <div class="shint">${isOrganizer()?'You are the organizer. ':''}Friends type the code under “I have a party code”, or open your link — then claim their name, set a passcode, and everything syncs live.</div>
+    <div class="srow"><button class="sbtn solid" id="ptCopy">Copy party link</button><button class="sbtn" id="ptCopyCode">Copy code</button></div>
     ${members}
     <div class="srow" style="margin-top:12px"><button class="sbtn" id="ptLeave">Leave party</button><button class="sbtn" id="ptClose">Close</button></div>
   </div>`;
   sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
   document.getElementById('ptClose').onclick=closeSheet;
   document.getElementById('ptCopy').onclick=ev=>copy(partyLink(),ev.target);
+  document.getElementById('ptCopyCode').onclick=ev=>copy(S.room,ev.target);
   document.getElementById('ptLeave').onclick=()=>{ leaveParty(); closeSheet(); };
 }
 
