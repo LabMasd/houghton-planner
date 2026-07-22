@@ -567,7 +567,15 @@ function openPersonView(p){
 }
 
 // ---------- party mode (Firebase live sync) ----------
-const FIREBASE_CONFIG = null; /* paste your firebaseConfig object here to enable party mode */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDtLYz1e33RXaTIFy72ps62es4M-YOLPvQ",
+  authDomain: "partyplanner-e87c3.firebaseapp.com",
+  databaseURL: "https://partyplanner-e87c3-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "partyplanner-e87c3",
+  storageBucket: "partyplanner-e87c3.firebasestorage.app",
+  messagingSenderId: "462526934437",
+  appId: "1:462526934437:web:79fc053581913c45cf0c4c"
+};
 let FB=null, myUid=null, roomUnsub=null, applyingRemote=false, pushTimer=null;
 const claimed=new Set();
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('htn26:'+s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
