@@ -30,7 +30,7 @@ header{background:var(--paper);position:relative;z-index:20;padding-top:env(safe
 .people{display:flex;gap:8px;padding:8px 16px 10px;overflow-x:auto;scrollbar-width:none}
 .people::-webkit-scrollbar{display:none}
 .pchip{display:flex;align-items:center;gap:6px;border:1px solid var(--grey3);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;flex:0 0 auto;color:var(--pc,var(--ink));background:var(--paper)}
-.pchip.on{background:var(--pc,var(--ink));border-color:var(--pc,var(--ink));color:#fff}
+.pchip.on{background:var(--pc,var(--ink));border-color:var(--pc,var(--ink));color:var(--pt,#fff)}
 .pchip.add{border:1px dashed var(--grey3);color:var(--txt2);font-weight:500}
 .tabs{display:flex;align-items:center;gap:8px;padding:0 16px 12px;border-top:none}
 .days{display:flex;flex:1;background:var(--grey1);border-radius:999px;padding:3px}
@@ -115,11 +115,11 @@ main{position:fixed;top:148px;left:0;right:0;bottom:0;overflow:hidden}
 .sr .a{flex:1;min-width:0;font-size:14px;font-weight:700;text-transform:uppercase;line-height:1.2}
 .sr .a small{display:block;font-size:10px;font-weight:500;letter-spacing:.06em;opacity:.65;margin-top:1px}
 .sr .go{flex:0 0 auto;border:1px solid var(--grey3);border-radius:999px;padding:6px 12px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:none;color:inherit}
-.sr.picked{background:var(--pc,var(--ink));border-color:var(--pc,var(--ink));color:#fff}
-.sr.picked .go{border-color:rgba(255,255,255,.55);color:#fff}
+.sr.picked{background:var(--pc,var(--ink));border-color:var(--pc,var(--ink));color:var(--pt,#fff)}
+.sr.picked .go{border-color:currentColor;color:inherit}
 .snores{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faded);padding:14px 2px}
 .pbig{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--grey3);border-radius:var(--rm);color:var(--pc);padding:14px;margin-bottom:8px;font-size:15px;font-weight:700;text-transform:uppercase;background:var(--paper)}
-.pbig.going{background:var(--pc);border-color:var(--pc);color:#fff}
+.pbig.going{background:var(--pc);border-color:var(--pc);color:var(--pt,#fff)}
 .pbig .pd{width:10px;height:10px}
 .pbig .st2{margin-left:auto;font-size:11px;font-weight:500;letter-spacing:.06em}
 .pvday{font-weight:800;font-size:11px;letter-spacing:.12em;margin:14px 0 6px;text-transform:uppercase;color:var(--txt2)}
@@ -174,9 +174,12 @@ const DAYS = ['thu','fri','sat','sun'];
 const DAYNAMES = {thu:'Thursday',fri:'Friday',sat:'Saturday',sun:'Sunday'};
 const STAGE_ORDER = ['DERREN SMART STAGE','PINTERS','THE WAREHOUSE','THE QUARRY','THE PAVILION','EARTHLING','OUTBURST','TERMINUS','STALLIONS','THE OLD GRAMOPHONE','GIANT STEPS','SCULPTURE GARDEN','THE ORCHARD','THE ARMADILLO'];
 const TERMINUS_DAYS = ['fri','sat','sun'];
-const COLORS = ['#1976D2','#2E7D32','#D84315','#7B1FA2','#C2185B','#00796B','#303F9F','#D32F2F','#6D4C41','#455A64','#0277BD','#558B2F'];
-const COLORS_EXTRA = ['#AD1457','#4527A0','#00695C','#BF360C','#1B5E20','#0D47A1','#4E342E','#263238','#880E4F','#311B92','#01579B','#33691E'];
+const COLORS = ['#3498DB','#2ECC71','#E74C3C','#9B59B6','#F1C40F','#E67E22','#1ABC9C','#34495E','#C0392B','#2980B9','#27AE60','#D35400'];
+const COLORS_EXTRA = ['#16A085','#8E44AD','#2C3E50','#F39C12','#95A5A6','#7F8C8D'];
 const ALLCOLORS = COLORS.concat(COLORS_EXTRA);
+function lumc(hex){const v=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4));return .2126*v[0]+.7152*v[1]+.0722*v[2];}
+function textOn(hex){const L=lumc(hex);return (1.05/(L+.05))>=((L+.05)/.05)?'#FFFFFF':'#0A0A0A';}
+function isLight(hex){ return textOn(hex)==='#0A0A0A'; }
 function takenColors(exceptId){ return S.people.filter(p=>p.id!==exceptId).map(p=>p.color); }
 function freeColor(){ const t=takenColors(); return ALLCOLORS.find(c=>!t.includes(c))||ALLCOLORS[S.people.length%ALLCOLORS.length]; }
 const HOUR = 48, DAY_MIN = 23*60;
@@ -215,6 +218,7 @@ function renderPeople(){
     const b=document.createElement('button');
     b.className='pchip'+(p.id===S.active?' on':'');
     b.style.setProperty('--pc',p.color);
+    b.style.setProperty('--pt',textOn(p.color));
     b.textContent=p.name;
     b.onclick=()=>{ S.active=p.id; save(); renderAll(); openPersonView(p); };
     row.appendChild(b);
@@ -280,10 +284,14 @@ function renderGrid(){
       const who=S.people.filter(p=>picksOf(p.id).includes(id));
       el.className='act'+(durPx<34?' sm':'')+(ai%2?' g2':'')+(who.length?' picked':'');
       el.dataset.aid=id;
-      if(who.length===1){ el.style.background=who[0].color; }
-      else if(who.length>1){
+      if(who.length===1){
+        el.style.background=who[0].color;
+        el.style.color=textOn(who[0].color);
+      }else if(who.length>1){
         const n=who.length;
-        el.style.background=`linear-gradient(rgba(0,0,0,.22),rgba(0,0,0,.22)),linear-gradient(90deg,${who.map((p,i)=>`${p.color} ${i*100/n}%,${p.color} ${(i+1)*100/n}%`).join(',')})`;
+        const scrim=who.some(p=>isLight(p.color))?0.42:0.22;
+        el.style.background=`linear-gradient(rgba(0,0,0,${scrim}),rgba(0,0,0,${scrim})),linear-gradient(90deg,${who.map((p,i)=>`${p.color} ${i*100/n}%,${p.color} ${(i+1)*100/n}%`).join(',')})`;
+        el.style.color='#FFFFFF';
       }
       el.style.top=(a.start/60*HOUR)+'px';
       el.style.height=Math.max(durPx-2,16)+'px';
@@ -331,8 +339,9 @@ function openActSheet(id){
   }else{
     body=S.people.map(p=>{
       const going=picksOf(p.id).includes(id);
-      return `<button class="pbig${going?' going':''}" data-p="${p.id}" style="--pc:${p.color}">
-        <span class="pd" style="background:${going?'#fff':p.color}"></span>${esc(p.name)}
+      const tp=textOn(p.color);
+      return `<button class="pbig${going?' going':''}" data-p="${p.id}" style="--pc:${p.color};--pt:${tp}">
+        <span class="pd" style="background:${going?tp:p.color}"></span>${esc(p.name)}
         <span class="st2">${going?'Going ✓':'Not going'}</span></button>`;
     }).join('');
   }
@@ -458,7 +467,7 @@ function openPersonSheet(p){
       b.className='sw'+(c===sel?' sel':'')+(isTaken?' taken':'');
       b.style.background=c;
       b.setAttribute('aria-label','colour '+c+(isTaken?' (taken)':''));
-      if(isTaken) b.innerHTML='<span>✕</span>';
+      if(isTaken) b.innerHTML=`<span style="color:${textOn(c)}">✕</span>`;
       else b.onclick=()=>{ sel=c; paintSwatches(); };
       swBox.appendChild(b);
     });
@@ -517,7 +526,7 @@ function openPersonView(p){
   });
   if(!body) body='<div class="shint">No picks yet — tap sets in the grid or use Search.</div>';
   sheet.innerHTML=`<div class="sheetIn">
-    <h2 style="color:${p.color}">${esc(p.name)}</h2>
+    <h2><span class="pd" style="background:${p.color};width:12px;height:12px;margin-right:6px"></span>${esc(p.name)}</h2>
     ${body}
     <div class="srow" style="margin-top:10px">
       <button class="sbtn" id="pvEdit">Edit</button>
@@ -606,7 +615,7 @@ function renderResults(q){
     const picked=picksOf(S.active).includes(id);
     row.className='sr'+(picked?' picked':'');
     const ap=person(S.active);
-    if(picked&&ap) row.style.setProperty('--pc',ap.color);
+    if(picked&&ap){ row.style.setProperty('--pc',ap.color); row.style.setProperty('--pt',textOn(ap.color)); }
     row.innerHTML=`
       <div class="d">${DAYNAMES[a.day].slice(0,3)}<small>${fmt(a.start)}–${fmt(a.end)}</small></div>
       <div class="a">${esc(a.artist)}<small>${esc(titleStage(a.stage))}</small></div>
