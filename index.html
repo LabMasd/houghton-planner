@@ -450,8 +450,9 @@ function openPersonSheet(p){
   const sheet=document.getElementById('sheet');
   sheet.className='open center'; sheet.innerHTML='';
   const taken=takenColors(p&&p.id);
-  let lib=p?(Object.keys(PALETTES).find(k=>PALETTES[k].includes(p.color))||'flat'):'flat';
-  let sel=p?p.color:(PALETTES[lib].find(c=>!taken.includes(c))||PALETTES[lib][0]);
+  const partyLocked=!!(FIREBASE_CONFIG&&S.room&&S.roomLib);
+  let lib=partyLocked?S.roomLib:(p?(Object.keys(PALETTES).find(k=>PALETTES[k].includes(p.color))||'flat'):'flat');
+  let sel=(p&&PALETTES[lib].includes(p.color))?p.color:(PALETTES[lib].find(c=>!taken.includes(c))||PALETTES[lib][0]);
 
   const inWrap=document.createElement('div'); inWrap.className='sheetIn modal';
   inWrap.innerHTML=`<h2>${p?'Edit '+esc(p.name):'Join the party'}</h2>`
@@ -467,6 +468,10 @@ function openPersonSheet(p){
   const swBox=document.createElement('div'); swBox.className='swatches';
   function paintLibs(){
     libRow.innerHTML='';
+    if(partyLocked){
+      libRow.innerHTML=`<span class="shint" style="margin:0">Party palette: <b>${LIBNAMES[lib]}</b></span>`;
+      return;
+    }
     Object.keys(PALETTES).forEach(k=>{
       const b=document.createElement('button');
       b.className='fchip'+(k===lib?' on':'');
@@ -606,7 +611,7 @@ function subscribeRoom(id){
     const v=snap.val();
     if(!v){ leaveParty(); return; }
     applyingRemote=true;
-    S.room=id; S.roomName=v.name||'Party'; S.roomOrg=v.org;
+    S.room=id; S.roomName=v.name||'Party'; S.roomOrg=v.org; S.roomLib=PALETTES[v.lib]?v.lib:'flat';
     const ppl=v.people||{};
     S.people=Object.keys(ppl).sort((a,b)=>(ppl[a].ts||0)-(ppl[b].ts||0))
       .map(k=>({id:k,name:ppl[k].name,color:ppl[k].color,pin:ppl[k].pin||null}));
@@ -636,17 +641,23 @@ function partyRemovePerson(pid){
   FB.m.remove(FB.m.ref(FB.db,'rooms/'+S.room+'/people/'+pid));
   FB.m.remove(FB.m.ref(FB.db,'rooms/'+S.room+'/picks/'+pid));
 }
-async function createParty(name){
+async function createParty(name,lib){
   const id=Array.from(crypto.getRandomValues(new Uint8Array(9))).map(b=>'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'[b%54]).join('');
+  lib=PALETTES[lib]?lib:'flat';
+  const pal=PALETTES[lib];
   const people={},picks={};
-  S.people.forEach((p,i)=>{ people[p.id]={name:p.name,color:p.color,pin:p.pin||null,ts:i}; picks[p.id]=picksOf(p.id); claimed.add(p.id); });
+  S.people.forEach((p,i)=>{
+    if(!pal.includes(p.color)) p.color=pal.find(c=>!S.people.some(x=>x!==p&&x.color===c))||pal[i%pal.length];
+    people[p.id]={name:p.name,color:p.color,pin:p.pin||null,ts:i};
+    picks[p.id]=picksOf(p.id); claimed.add(p.id);
+  });
   S.claims=[...claimed];
-  await FB.m.set(FB.m.ref(FB.db,'rooms/'+id),{name:name||'Houghton party',org:myUid,created:{'.sv':'timestamp'},people,picks});
-  S.room=id; save(true); subscribeRoom(id);
+  await FB.m.set(FB.m.ref(FB.db,'rooms/'+id),{name:name||'Houghton party',org:myUid,lib,created:{'.sv':'timestamp'},people,picks});
+  S.room=id; S.roomLib=lib; save(true); subscribeRoom(id);
 }
 function leaveParty(){
   if(roomUnsub){ roomUnsub(); roomUnsub=null; }
-  S.room=null; S.roomOrg=null; S.roomName=null;
+  S.room=null; S.roomOrg=null; S.roomName=null; S.roomLib=null;
   save(true); renderAll();
 }
 function partyLink(){ return location.origin+location.pathname+'#r='+S.room; }
@@ -682,20 +693,37 @@ function openPartySheet(){
   const sheet=document.getElementById('sheet');
   sheet.className='open';
   if(!S.room){
+    let lib='flat';
     sheet.innerHTML=`<div class="sheetIn">
       <h2>Party</h2>
       <div class="shint">Start a live party: everyone opens one link, claims their name with a passcode, and picks sync to the whole group instantly.</div>
       <div class="srow"><input class="sin" id="ptName" placeholder="Party name" maxlength="24" value="HOUGHTON 2026"></div>
+      <div class="shint" style="margin-bottom:6px">Party colours — everyone picks theirs from this set:</div>
+      <div class="filterRow" id="ptLibs"></div>
+      <div class="swatches" id="ptPrev" style="grid-template-columns:repeat(9,1fr);gap:8px;margin-bottom:14px"></div>
       <div class="srow"><button class="sbtn solid" id="ptStart">Start party</button></div>
       <div class="shint">Your current people and picks come with you. Or open a party link someone sent you.</div>
       <div class="srow"><button class="sbtn" id="ptOffline">Offline share links</button><button class="sbtn" id="ptClose">Close</button></div>
     </div>`;
     sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
+    const libRow=document.getElementById('ptLibs'),prev=document.getElementById('ptPrev');
+    function paintPt(){
+      libRow.innerHTML='';
+      Object.keys(PALETTES).forEach(k=>{
+        const b=document.createElement('button');
+        b.className='fchip'+(k===lib?' on':'');
+        b.textContent=LIBNAMES[k];
+        b.onclick=()=>{ lib=k; paintPt(); };
+        libRow.appendChild(b);
+      });
+      prev.innerHTML=PALETTES[lib].slice(0,9).map(c=>`<span class="sw" style="background:${c};pointer-events:none"></span>`).join('');
+    }
+    paintPt();
     document.getElementById('ptClose').onclick=closeSheet;
     document.getElementById('ptOffline').onclick=openShareSheet;
     document.getElementById('ptStart').onclick=async ev=>{
       ev.target.textContent='Starting…';
-      await createParty(document.getElementById('ptName').value.trim());
+      await createParty(document.getElementById('ptName').value.trim(),lib);
       openPartySheet();
     };
     return;
