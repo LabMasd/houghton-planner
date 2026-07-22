@@ -737,6 +737,7 @@ function partyQueue(){
   if(!inParty()||applyingRemote) return;
   clearTimeout(pushTimer);
   pushTimer=setTimeout(()=>{
+    if(!inParty()) return;
     const pids=isOrganizer()?S.people.map(p=>p.id):S.people.filter(p=>claimed.has(p.id)).map(p=>p.id);
     pids.forEach(pid=>{
       const p=S.people.find(x=>x.id===pid);
