@@ -453,12 +453,12 @@ function openWelcome(){
     <h2>Houghton 2026 Planner</h2>
     <div class="shint">The full timetable, tappable. Mark the sets you want, see who's going where, and plan the weekend together — live on everyone's phone.</div>
     <div class="srow"><button class="sbtn solid" id="wStart">Start a party</button></div>
-    <div class="shint" style="margin:2px 0 12px">You'll be the organizer — add your name, choose the party's colours, then invite the others with one link.</div>
+    <div class="shint" style="margin:2px 0 12px">You'll be the organizer — name the party, choose its colour set, add your name, then invite the others with one link.</div>
     <div class="srow"><button class="sbtn" id="wSolo">Just plan for myself</button></div>
     <div class="shint" style="margin-top:12px">Got an invite link from a friend? Open that link instead — no setup needed.</div>
   </div>`;
   sheet.onclick=e=>{ if(e.target===sheet) closeSheet(); };
-  document.getElementById('wStart').onclick=()=>openPersonSheet(null,()=>openPartySheet());
+  document.getElementById('wStart').onclick=()=>openPartySheet();
   document.getElementById('wSolo').onclick=()=>openPersonSheet(null);
 }
 
@@ -742,7 +742,8 @@ function openPartySheet(){
     document.getElementById('ptStart').onclick=async ev=>{
       ev.target.textContent='Starting…';
       await createParty(document.getElementById('ptName').value.trim(),lib);
-      openPartySheet();
+      if(!S.people.length){ closeSheet(); openPersonSheet(null); }
+      else openPartySheet();
     };
     return;
   }
